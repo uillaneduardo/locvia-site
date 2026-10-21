@@ -1,0 +1,139 @@
+/*
+ * Locvia — fundação responsiva compartilhada, todas as telas da demo.
+ * Carregada por último para corrigir min-content de Flex/Grid e rolagem local.
+ * Não esconder horizontalmente a página como substituto da correção do layout.
+ */
+html{max-width:100%}
+body{min-width:0;max-width:100%;margin:0}
+.shell{display:flex;width:100%;max-width:100%;min-width:0;min-height:100dvh}
+.shell>.sidebar{flex-shrink:0;max-width:100%}
+.shell>.main{flex:1 1 0%;width:0;min-width:0;max-width:100%}
+.topbar{width:100%;max-width:100%;min-width:0}
+.top-left,.top-right,.breadcrumb{min-width:0}
+.top-left{flex:1 1 auto}
+.top-right{flex:0 1 auto;justify-content:flex-end;gap:clamp(5px,0.9vw,13px)}
+.top-right>*{flex-shrink:0}
+.breadcrumb{overflow:hidden}
+.breadcrumb strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sector-switch{min-width:0;max-width:100%;flex:0 1 auto}
+.sector-switch select{min-width:0;max-width:min(185px,22vw);text-overflow:ellipsis;overflow:hidden}
+.content{box-sizing:border-box;width:100%;max-width:1400px;min-width:0;margin-inline:auto;padding-inline:clamp(14px,2.5vw,38px)}
+/* Encolhimento correto de seções em todas as rotas */
+#screen,.section-head,.section-head>div,.stats,.main-grid,.panel,.panel-head,.task-list,.task,.movement-list,.settings-layout,
+.settings-panel,.settings-sidebar,.settings-form-body,.item-grid,.item-list,.item-list-row,.item-card,.items-tools,
+.filters,.date-filter,.calendar-layout,.calendar-panel,.calendar-selected,.calendar-header,.calendar-rentals,.calendar-rental-entry,
+.finance-toolbar,.finance-period,.finance-summary,.finance-metric,.finance-help-line,.finance-filterbar,
+.account-grid,.account-grid>.panel,.account-data-line,.account-picture-line,.account-picture-line>div,
+.logo-settings-layout,.logo-controls,.custom-color-row,.notification-options,.dialog,.dialog-head,.dialog-body,.dialog-foot,.form-grid,.form-field,.add-line,.detail-info,.rent-items{
+  min-width:0;
+  max-width:100%;
+}
+.main-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,.82fr)}
+.settings-layout{grid-template-columns:minmax(0,1.25fr) minmax(0,.76fr)}
+.settings-sidebar{grid-template-columns:minmax(0,1fr)}
+.calendar-layout{grid-template-columns:minmax(0,1.7fr) minmax(0,.78fr)}
+.account-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stats,.finance-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.item-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,174px),1fr))}
+.item-list-row .item-row-open,.item-row-name,.item-row-detail,.movement-body,.task-body,.notice-info,.person-cell,.settings-preview>div{min-width:0}
+.section-head{flex-wrap:wrap}
+.section-head>div{flex:1 1 360px}
+.section-head>.primary-btn{flex:0 1 auto}
+.section-head h1,.section-head p,.panel-head h2,.panel-head p,.task-body p,.movement-body small,
+.settings-preview strong,.account-data-line strong,.finance-help-line span,.finance-metric strong,
+.notice-info strong,.notice-info small,.calendar-rental-description strong,.calendar-rental-description small{
+  overflow-wrap:anywhere;
+}
+.panel-head>div{min-width:0}
+/* As tabelas rolam APENAS dentro do respectivo painel, inclusive Financeiro e Clientes. */
+.panel .table-wrap,.table-wrap{display:block;width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.table-wrap>.data-table{width:max-content;min-width:100%;max-width:none}
+.table-wrap .data-table td,.table-wrap .data-table th{white-space:nowrap}
+/* Edição de aluguéis e detalhes podem precisar rolar dentro do modal. */
+.modal-layer{max-width:100vw;max-height:100dvh}
+.dialog{width:min(665px,100%);min-width:0;max-width:100%;max-height:min(91dvh,900px)}
+.dialog.crop-dialog{width:min(725px,100%);max-width:100%}
+.dialog-body{min-width:0;overflow-x:auto}
+.dialog .rent-items{table-layout:auto;max-width:100%}
+.dialog .rent-items td{overflow-wrap:anywhere}
+.form-field input,.form-field select,.form-field textarea{max-width:100%;min-width:0}
+.primary-btn,.outline-btn,.mini-btn,.task-action,.theme-choice,.chip{max-width:100%}
+.finance-period{flex-wrap:wrap}
+.finance-period>strong{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.finance-help-line{flex-wrap:wrap}
+.account-picture-line{flex-wrap:wrap}
+.account-picture-line>div{flex:1 1 170px}
+.account-data-line>div{min-width:0;flex:1 1 auto}
+.account-data-line strong{word-break:break-word}
+.contact-widget{max-width:calc(100vw - 26px)}
+.contact-panel{max-width:100%}
+/* Grade da tela Hoje: não imponha coluna fixa de 285px quando o painel encolher. */
+@media(max-width:1250px){
+ .main-grid{grid-template-columns:minmax(0,1fr)}
+ .calendar-layout{grid-template-columns:minmax(0,1fr)}
+ .settings-layout{grid-template-columns:minmax(0,1fr)}
+ .settings-sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:1100px){
+ .account-grid{grid-template-columns:minmax(0,1fr)}
+ .topbar{padding-inline:clamp(12px,2vw,24px)}
+ .top-right{gap:6px}
+ .top-left{gap:7px}
+}
+@media(max-width:800px){
+ .shell>.sidebar{width:min(245px,88vw)}
+ .shell>.main{flex:1 1 100%;width:100%;max-width:100%}
+ .topbar{padding-inline:12px}
+ .content{padding:25px 16px 75px}
+ .settings-sidebar{grid-template-columns:minmax(0,1fr)}
+ .finance-summary,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .finance-period{gap:6px}
+ .date-filter{width:100%}
+ .item-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ .content{padding:20px 12px 85px}
+ .section-head{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+ .section-head>div{flex:0 1 auto;width:100%}
+ .section-head>.primary-btn{width:100%}
+ .settings-layout,.settings-sidebar,.account-grid,.calendar-layout,.main-grid{grid-template-columns:minmax(0,1fr)}
+ .item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .finance-summary,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .top-right{gap:4px}
+ .topbar .sector-switch select{max-width:clamp(72px,22vw,120px)}
+ .account-top-trigger{width:31px;height:31px}
+ .field-search{min-width:0;max-width:100%}
+ .finance-period{justify-content:flex-start;max-width:100%}
+ .finance-period>strong{flex:1 1 120px;text-align:center;font-size:12px}
+ .finance-period .outline-btn{margin-left:auto}
+ .finance-metric>strong{font-size:clamp(16px,5vw,22px)}
+ .finance-metric-top{align-items:flex-start}
+ .finance-filterbar{display:flex;flex-wrap:nowrap;overflow-x:auto}
+ .finance-filterbar .chip{flex:0 0 auto}
+ .dialog{width:100%;max-height:calc(100dvh - 22px)}
+ .dialog-head,.dialog-body{padding:15px}
+ .dialog-foot{padding:12px 15px}
+ .form-grid{grid-template-columns:minmax(0,1fr)}
+ .form-field.wide{grid-column:auto}
+ .settings-form-body{padding:16px}
+ .add-line{grid-template-columns:minmax(0,1fr) 72px}
+ .date-filter label{flex:1 1 125px;min-width:0}
+ .item-list-row{width:100%}
+ .item-row-price{min-width:0}
+ .account-data-line{flex-wrap:wrap}
+ .contact-widget{right:12px}
+}
+@media(max-width:410px){
+ .topbar .top-left{flex:0 0 auto}
+ .topbar .breadcrumb{display:none}
+ .topbar .top-right{flex:1 1 auto;min-width:0;gap:3px}
+ .topbar .sector-switch{min-width:0}
+ .topbar .sector-switch select{max-width:76px;font-size:10px}
+ .topbar .account-top-trigger{display:none} /* Minha conta permanece no menu lateral */
+ .topbar .top-demo{display:none}
+ .menu-toggle{padding:5px}
+ .item-grid{gap:8px}
+ .compact-item-card .card-actions{gap:3px;padding:6px}
+ .compact-item-card .card-actions .mini-btn{min-width:0;padding:8px 4px}
+ .finance-period>strong{flex:1 1 95px}
+}
