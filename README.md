@@ -207,6 +207,7 @@ locvia-site/
 ├── docs/                     # produto, identidade, arquitetura e homologação
 │   ├── README.md
 │   ├── identidade-visual.md
+│   ├── responsividade.md
 │   ├── visao-do-produto.md
 │   ├── experiencia-e-regras.md
 │   ├── demonstracao-e-implementacao.md
@@ -227,6 +228,7 @@ locvia-site/
     │   ├── personalization.css
     │   ├── calendar-notifications.css
     │   ├── finance-account.css
+    │   ├── responsive.css         # largura automática em todas as telas
     │   └── contact-widget.js
     └── ajuda/
         ├── index.html
@@ -264,6 +266,12 @@ A demo também possui um botão flutuante **verde WhatsApp** no canto inferior d
 **Não há dinheiro real, integração bancária, processamento de cartões, login ou senha em operação.** Os dados fictícios voltam ao início ao recarregar.
 
 **Decisão arquitetural:** backend futuro em **PHP**, API REST/JSON HTTPS **pública autenticada**, validação, autorização, controle transacional e isolamento multiempresa no servidor. Frontend em HTML/CSS/JS puros. WebSocket/WSS e workers PHP assíncronos apenas para eventos ou tarefas que justifiquem tempo real ou processamento em fila. Consulte [Arquitetura da API PHP](./docs/arquitetura-api-php.md) e [Financeiro, Conta e Contatos](./docs/financeiro-conta-contatos.md).
+
+## Largura responsiva da demonstração
+
+Todas as sete telas (**Hoje, Aluguéis, Meus itens, Clientes, Financeiro, Configurações e Minha conta**) seguem a folha compartilhada `site/demo/responsive.css`, carregada por último. A estrutura se ajusta à largura disponível, inclusive Full HD, notebook, tablet e celular. Tabelas extensas rolam **dentro do painel**, não na página. Grades de cartões, cabeçalho, formulários e diálogos devem encolher sem cortar ações.
+
+Veja [Regras de responsividade e diagnóstico](./docs/responsividade.md) para conferir a ausência de barra horizontal do documento e executar a homologação visual após o deploy.
 
 ## Calendário e avisos na demonstração
 
