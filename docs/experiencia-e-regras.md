@@ -72,3 +72,16 @@ O cadastro demonstrativo permite nome, telefone, e-mail e observações. A exclu
 - **Restaurar exemplo**, com confirmação.
 
 **Limitação da demo:** configurações, cadastros e aluguéis são independentes por cenário, mas não persistem após recarregar a página. A versão operacional precisará de salvamento seguro, autenticação e histórico.
+
+
+## Calendário de aluguéis — decisão adicional
+
+A área **Aluguéis** alterna entre **Lista** e **Calendário**, compartilhando filtros de situação e busca por cliente/item/número. O calendário é mensal, usa início da semana no domingo, navegação de meses e botão **Hoje**. Selecionar um dia mostra os aluguéis previstos para o intervalo (inclusivo) e permite abrir seus detalhes. No celular, cada compromisso é representado por um marcador compacto.
+
+Uma devolução atrasada também aparece **no dia de hoje** como alerta. Isso não significa liberação do item: o estoque continua ocupado até registrar a devolução. Evita-se repetir visualmente uma devolução atrasada por todos os dias futuros.
+
+## Avisos internos — decisão adicional
+
+O sino do cabeçalho mostra **avisos gerados localmente a partir dos aluguéis**; não há notificações externas. Em **Configurações → Notificações**, é possível ativar/desativar o sino e selecionar categorias independentes: separação, retirada, devolução próxima e devolução atrasada. A antecedência das devoluções pode ser de **0, 1, 2, 3, 5 ou 7 dias**. A antecedência da separação usa o prazo já definido em Configurações.
+
+**Desativar o sino não oculta tarefas na tela Hoje** nem altera reservas ou devoluções. Os avisos são atualizados ao registrar novas ações, são separados por cenário fictício e não persistem após recarregar.
