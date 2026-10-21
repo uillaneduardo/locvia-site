@@ -70,9 +70,10 @@ html[data-mode="dark"] .item-card-top,html[data-mode="dark"] .item-card:nth-chil
 html[data-mode="dark"] .item-emoji,html[data-mode="dark"] .settings-preview,html[data-mode="dark"] .item-detail-overview,html[data-mode="dark"] .date-tile,html[data-mode="dark"] .settings-preview .round-initials{background:#202f46;border-color:#384a63}
 html[data-mode="dark"] .settings-preview .round-initials.has-logo,html[data-mode="dark"] .workspace-symbol.has-logo{background:#fff}
 html[data-mode="dark"] .dialog-head,html[data-mode="dark"] .dialog-foot,html[data-mode="dark"] .panel-head,html[data-mode="dark"] .task,html[data-mode="dark"] .movement,html[data-mode="dark"] .card-footer,html[data-mode="dark"] .card-actions,html[data-mode="dark"] .table-actions,html[data-mode="dark"] .item-detail-rental,html[data-mode="dark"] .detail-rental-link{border-color:var(--line)}
-html[data-mode="dark"] .tip-banner,html[data-mode="dark"] .demo-notice,html[data-mode="dark"] .personalization-note{background:var(--primary-pale);color:var(--brand-ink);border-color:var(--primary-line)}
+html[data-mode="dark"] .tip-banner,html[data-mode="dark"] .demo-notice{background:var(--primary-pale);color:var(--text);border-color:var(--primary-line)}
+html[data-mode="dark"] .personalization-note{background:var(--primary-pale);color:var(--brand-ink);border-color:var(--primary-line)}
 html[data-mode="dark"] .tip-banner strong,html[data-mode="dark"] .demo-notice strong,html[data-mode="dark"] .link-like,html[data-mode="dark"] .settings-preview .round-initials{color:var(--brand-ink)}
-html[data-mode="dark"] .demo-notice p{color:#bbcae2}
+html[data-mode="dark"] .demo-notice p{color:var(--muted)}
 html[data-mode="dark"] .badge.ready,html[data-mode="dark"] .task-icon,html[data-mode="dark"] .warn-inline{background:#413521;color:#f7c66e;border-color:#695636}
 html[data-mode="dark"] .badge.late,html[data-mode="dark"] .task-icon.red,html[data-mode="dark"] .warn-inline.red{background:#492a36;color:#ffb0ba;border-color:#78434d}
 html[data-mode="dark"] .badge.out,html[data-mode="dark"] .task-icon.blue{background:#203c54;color:#accfff}
