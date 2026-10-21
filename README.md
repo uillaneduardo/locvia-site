@@ -216,7 +216,8 @@ locvia-site/
     ├── styles.css
     ├── assets/
     │   ├── favicon.svg
-    │   └── locvia-brand.css # wordmark institucional compartilhado
+    │   ├── locvia-brand.css # wordmark institucional compartilhado
+    │   └── contact-config.js # destinos públicos dos canais de suporte
     └── demo/
         ├── index.html      # app demonstrativo
         ├── workflow.css    # tema neutro com destaque índigo
@@ -247,6 +248,18 @@ Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
 
 © Locvia. Desenvolvido por [ulln](https://ulln.com.br).
 
+
+## Financeiro, Minha conta e contatos
+
+A tela **Financeiro** é um apoio direto às decisões do empreendedor: recebido, despesas pagas, saldo do período e a receber; ações para **lançar despesa**, **registrar pagamento parcial de aluguel**, **marcar despesa como paga**, navegar por meses e consultar pendências. Um botão de olho **oculta/exibe valores**; em Configurações, é possível ativar **iniciar com valores ocultos**. A proteção mascara apenas o que a tela mostra e não equivale a controle de acesso.
+
+**Minha conta** permite simular alteração de nome, avatar e e-mail; a troca de senha é informativa, sem receber credenciais reais. Plano, forma de pagamento e histórico de assinatura aparecem com estados honestos de **demonstração sem assinatura**. **Assinatura Locvia e Financeiro da locadora são domínios independentes.**
+
+A demo também possui um botão flutuante **verde WhatsApp** no canto inferior direito. Ele abre um painel de contatos (WhatsApp, Telegram, e-mail e telefone). Os destinos são configurados em `site/assets/contact-config.js`; inicialmente somente o e-mail está preenchido, e os demais aparecem desativados até receberem valores oficiais. O Telegram usa identidade visual azul fixa. Os acessos a `/ajuda/` dentro da demo abrem em **nova aba**.
+
+**Não há dinheiro real, integração bancária, processamento de cartões, login ou senha em operação.** Os dados fictícios voltam ao início ao recarregar.
+
+**Decisão arquitetural:** backend futuro em **PHP**, API REST/JSON HTTPS **pública autenticada**, validação, autorização, controle transacional e isolamento multiempresa no servidor. Frontend em HTML/CSS/JS puros. WebSocket/WSS e workers PHP assíncronos apenas para eventos ou tarefas que justifiquem tempo real ou processamento em fila. Consulte [Arquitetura da API PHP](./docs/arquitetura-api-php.md) e [Financeiro, Conta e Contatos](./docs/financeiro-conta-contatos.md).
 
 ## Calendário e avisos na demonstração
 
