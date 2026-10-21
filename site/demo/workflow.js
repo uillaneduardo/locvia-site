@@ -505,8 +505,8 @@
       '<div class="custom-color-row"><label class="form-field" for="custom-accent">Ou informe uma cor hexadecimal<input type="text" id="custom-accent" maxlength="7" autocomplete="off" spellcheck="false" value="'+safe(prefs.accent)+'" placeholder="#455CD4" aria-describedby="color-feedback"></label>'+
       '<button type="button" class="outline-btn" data-action="accent-custom">Aplicar cor</button></div><div id="color-feedback" class="color-feedback" role="status" aria-live="polite">Cor atual: '+safe(prefs.accent)+'</div>'+
       '<div class="form-section">Tema da interface</div><div class="theme-options" role="group" aria-label="Tema da interface">'+
-      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="light" aria-pressed="'+(prefs.mode==="light")+'">'+icon("check")+' Claro</button>'+
-      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="dark" aria-pressed="'+(prefs.mode==="dark")+'">'+icon("clock")+' Escuro</button></div>'+
+      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="light" aria-pressed="'+(prefs.mode==="light")+'">'+icon("sun")+' Claro</button>'+
+      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="dark" aria-pressed="'+(prefs.mode==="dark")+'">'+icon("moon")+' Escuro</button></div>'+
       '<label class="accessibility-control" for="accessibility-toggle"><input id="accessibility-toggle" type="checkbox"'+(prefs.accessibility?" checked":"")+'><span><strong>Modo de acessibilidade</strong><small>Texto maior, contraste reforçado, controles maiores, foco destacado e menos animações.</small></span></label>'+
       '<div class="personalization-note">A aparência e o logotipo são exclusivos desta demonstração. Ao recarregar a página, tudo volta ao padrão.</div></div>'+
       '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferências</button></div></div></form></section>'+
