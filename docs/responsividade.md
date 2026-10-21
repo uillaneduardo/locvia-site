@@ -4,21 +4,21 @@
 
 ## Decisão técnica
 
-A estrutura da demo deve se ajustar automaticamente ao espaço disponível. O arquivo \`site/demo/responsive.css\` é carregado **por último** em \`site/demo/index.html\`, após as folhas específicas das funcionalidades, para unificar o comportamento responsivo.
+A estrutura da demo deve se ajustar automaticamente ao espaço disponível. O arquivo `site/demo/responsive.css` é carregado **por último** em `site/demo/index.html`, após as folhas específicas das funcionalidades, para unificar o comportamento responsivo.
 
 ### Regras
 
-- \`.shell\` ocupa **100% da largura disponível**. \`.sidebar\` usa largura definida no desktop e vira gaveta sobreposta no mobile.
-- \`.main\` usa flex com base zero (\`flex: 1 1 0%; width: 0; min-width: 0\`), evitando que o tamanho intrínseco dos filhos aumente a largura de toda a página.
-- \`.content\` tem \`width: 100%\`, \`max-width: 1400px\` e margens automáticas, preservando respiro no Full HD sem forçar rolagem horizontal.
-- Grades de cartões e painéis usam colunas \`minmax(0, ...)\`; colunas ficam empilhadas quando o espaço diminuir.
-- **Tabelas** em Aluguéis, Clientes e Financeiro podem ser mais largas do que o painel: a rolagem horizontal acontece **dentro da tabela**, não no \`body\`.
+- `.shell` ocupa **100% da largura disponível**. `.sidebar` usa largura definida no desktop e vira gaveta sobreposta no mobile.
+- `.main` usa flex com base zero (`flex: 1 1 0%; width: 0; min-width: 0`), evitando que o tamanho intrínseco dos filhos aumente a largura de toda a página.
+- `.content` tem `width: 100%`, `max-width: 1400px` e margens automáticas, preservando respiro no Full HD sem forçar rolagem horizontal.
+- Grades de cartões e painéis usam colunas `minmax(0, ...)`; colunas ficam empilhadas quando o espaço diminuir.
+- **Tabelas** em Aluguéis, Clientes e Financeiro podem ser mais largas do que o painel: a rolagem horizontal acontece **dentro da tabela**, não no `body`.
 - Cabeçalho, breadcrumbs, seletores, botões e barra de filtros permitem encolher/quebrar linha. Em telefones muito estreitos, o atalho de Minha conta do topo pode ser ocultado, mas a função continua no menu lateral.
 - Calendário, formulários, pop-ups e diálogos respeitam a largura disponível; elementos com texto longo podem quebrar linha.
 - Em Meus itens, cartões são exibidos em duas colunas em celulares comuns e adaptam-se conforme a largura. O modo lista continua disponível.
 - O widget de atendimento permanece fixado ao canto direito sem aumentar o tamanho do documento.
 
-**Não usar \`overflow-x: hidden\` no \`body\` como conserto principal.** Isso apenas esconderia conteúdo, em vez de resolver a origem do excesso de largura.
+**Não usar `overflow-x: hidden` no `body` como conserto principal.** Isso apenas esconderia conteúdo, em vez de resolver a origem do excesso de largura.
 
 ## Homologação em navegador
 
@@ -41,7 +41,7 @@ Em cada viewport, navegar pelas **sete telas** e abrir: um produto, um cliente, 
 
 Depois de abrir a demo, execute no console:
 
-\`\`\`js
+```js
 const vw = document.documentElement.clientWidth;
 console.log({
   viewport: vw,
@@ -58,10 +58,10 @@ const elementosQueExcedem = [...document.querySelectorAll("body *")]
   .slice(0, 20)
   .map(el => ({elemento: el.tagName.toLowerCase(), classe: el.className, largura: el.getBoundingClientRect().width}));
 console.table(elementosQueExcedem);
-\`\`\`
+```
 
-**Ressalva:** itens dentro de tabelas com \`overflow-x:auto\` podem ultrapassar visualmente o painel ao rolar internamente e isso é esperado. A condição que deve ser eliminada é o **documento inteiro** exceder o viewport.
+**Ressalva:** itens dentro de tabelas com `overflow-x:auto` podem ultrapassar visualmente o painel ao rolar internamente e isso é esperado. A condição que deve ser eliminada é o **documento inteiro** exceder o viewport.
 
 ## Organização futura
 
-Ao criar novas telas ou componentes da API, reutilizar classes de layout e seguir os mesmos padrões. Não adicionar \`min-width\` fixo a grids, painéis ou tabelas fora de um contêiner rolável. Repetir a homologação de viewport após mudanças em CSS, botões ou cabeçalho.
+Ao criar novas telas ou componentes da API, reutilizar classes de layout e seguir os mesmos padrões. Não adicionar `min-width` fixo a grids, painéis ou tabelas fora de um contêiner rolável. Repetir a homologação de viewport após mudanças em CSS, botões ou cabeçalho.
