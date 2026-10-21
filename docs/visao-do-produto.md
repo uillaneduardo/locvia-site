@@ -53,3 +53,12 @@ O objetivo de longo prazo é um **software comercializável**, potencialmente **
 4. Visão “Hoje” confiável e simples.
 5. Auditoria/histórico e mecanismos de correção de erro.
 6. Em seguida: financeiro, políticas de contrato, notificações e integrações, de acordo com validação dos primeiros clientes.
+
+
+## Refinamento: gestão financeira e identidade
+
+O módulo **Financeiro** foi incluído para apoiar decisões diárias: cobrar aluguéis pendentes, controlar despesas e entender entradas e saídas efetivas, sem transformar o produto em um ERP contábil. Priorizam-se indicadores de caixa simples e ações rápidas.
+
+**Minha conta** é o espaço da pessoa usuária para credenciais e assinatura do SaaS, separado de **Configurações do negócio**. O backend operacional será uma **API PHP** com HTTPS/REST, autenticação e validação de domínio; WebSockets e processamento assíncrono entram somente onde fizerem diferença operacional. O frontend pode continuar em HTML/CSS/JavaScript puros.
+
+Ver [Arquitetura PHP](./arquitetura-api-php.md) e [Fluxos financeiro e de conta](./financeiro-conta-contatos.md).
