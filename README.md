@@ -35,6 +35,16 @@ Cada opção tem dados fictícios independentes na aba do navegador.
 
 A checagem considera **datas inclusivas e quantidade máxima ocupada por dia**, respeitando reservas, itens separados e itens em mãos de clientes. Um aluguel com devolução vencida continua bloqueando a unidade até o registro do retorno. Quantidades de locações futuras só bloqueiam datas sobrepostas; registros devolvidos ou cancelados liberam o período.
 
+### Acervo: cartões, lista e detalhes
+
+Na área **Meus itens**, o botão de visualização alterna entre **cartões compactos** e **lista** na mesma sessão. Os cartões usam várias colunas no computador e duas colunas em celulares comuns (três colunas em larguras intermediárias), preservando a leitura mesmo em telas pequenas.
+
+- Clique ou toque na área principal de um item para abrir **Detalhes**, onde são exibidos quantidade total, disponibilidade no período selecionado, aluguéis que ocupam o item, histórico e as ações **Editar item** e **Excluir**.
+- No modo lista, tocar na linha também abre o detalhe. Os botões de edição e exclusão continuam disponíveis diretamente na listagem.
+- O botão principal da tela Meus itens é **Novo item** (não Novo aluguel).
+- A busca, as datas de disponibilidade e a alternância de layout funcionam nas duas visualizações.
+- A opção de visualização é mantida enquanto a demo estiver aberta; recarregar restaura o layout inicial, como os demais estados demonstrativos.
+
 ### Clientes e itens — CRUD demonstrativo
 
 As áreas **Clientes** e **Meus itens** permitem **criar, consultar, editar e excluir** registros em formulários próprios:
@@ -143,6 +153,8 @@ Para parar:
 ```bash
 docker compose down
 ```
+
+**Cache do protótipo:** o Nginx utiliza `Cache-Control: no-store` nas rotas de `/demo/`, evitando que navegadores exibam JavaScript e CSS de versões anteriores após a atualização do container. Os demais recursos do site mantêm cache normal.
 
 Verificações úteis:
 
