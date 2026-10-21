@@ -143,7 +143,7 @@
       if(!qty)return;
       const start=r.from>from?r.from:from;
       const end=rentedEnd(r)<to?rentedEnd(r):to;
-      events.push([start,qty]);events.push([plusDay(end),-qty]);
+      events.push([start,qty]);if(end!=="9999-12-31")events.push([plusDay(end),-qty]);
     });
     events.sort((a,b)=>a[0].localeCompare(b[0]));
     let n=0,max=0;
