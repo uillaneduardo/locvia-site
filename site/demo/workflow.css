@@ -214,3 +214,26 @@ button:disabled{cursor:not-allowed;opacity:.48;box-shadow:none!important}.defs{p
   .compact-item-card .card-actions .mini-btn{height:32px}
   .compact-item-card .availability-line{align-items:flex-start;flex-direction:column;gap:2px}
 }
+
+
+/* Ajuda acessível em todas as larguras, sem sobrecarregar a navegação. */
+.help-trigger{display:inline-flex;align-items:center;justify-content:center;flex:none;width:39px;height:39px;background:#fff;color:#62749a;border:1px solid var(--line);border-radius:10px;transition:background .15s,border-color .15s,color .15s}
+.help-trigger .ico{height:20px;width:20px}
+.help-trigger:hover,.help-trigger:focus-visible{background:var(--primary-pale);border-color:var(--primary-line);color:var(--primary)}
+.sidebar-help-link{display:flex;align-items:center;gap:10px;margin:0 3px;padding:11px 2px;font-size:12px;font-weight:750;color:#687a9b}
+.sidebar-help-link .ico{width:18px;height:18px;color:var(--primary)}
+.sidebar-help-link:hover{color:var(--primary)}
+/* O cartão inteiro abre o detalhe; o sinal visual confirma essa possibilidade. */
+.item-open-hint{display:flex;align-items:center;justify-content:flex-end;gap:2px;margin-top:9px;color:var(--primary);font-size:10px;font-weight:800;line-height:1.2}
+.item-open-hint .ico{height:13px;width:13px}
+.item-card-open:hover .item-open-hint{text-decoration:underline;text-underline-offset:3px}
+.item-row-detail{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--primary);font-size:10px;font-weight:800}
+.item-row-detail .ico{height:14px;width:14px;color:var(--primary)}
+.item-row-open:hover .item-row-detail span{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:600px){
+  .help-trigger{width:37px;height:37px;border-radius:9px}
+  .help-trigger .ico{height:19px;width:19px}
+  .compact-item-card .item-open-hint{font-size:10px;margin-top:8px}
+  .item-row-detail span{display:none}
+  .item-row-detail .ico{width:16px;height:16px}
+}
