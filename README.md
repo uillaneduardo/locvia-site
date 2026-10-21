@@ -35,6 +35,28 @@ Cada opção tem dados fictícios independentes na aba do navegador.
 
 A checagem considera **datas inclusivas e quantidade máxima ocupada por dia**, respeitando reservas, itens separados e itens em mãos de clientes. Um aluguel com devolução vencida continua bloqueando a unidade até o registro do retorno. Quantidades de locações futuras só bloqueiam datas sobrepostas; registros devolvidos ou cancelados liberam o período.
 
+### Clientes e itens — CRUD demonstrativo
+
+As áreas **Clientes** e **Meus itens** permitem **criar, consultar, editar e excluir** registros em formulários próprios:
+
+- Clientes: nome, telefone, e-mail e observações.
+- Itens: nome, categoria, quantidade total e valor por aluguel.
+- Edição de cliente e item reflete nas demais telas da demonstração.
+- Exclusões exigem confirmação; clientes ou itens referenciados por qualquer aluguel, mesmo concluído ou cancelado, **não podem ser excluídos**, preservando o histórico.
+- A redução da quantidade de um item é bloqueada se ficar abaixo do máximo comprometido por aluguéis ativos em períodos sobrepostos. Itens entregues ainda não devolvidos continuam comprometidos.
+- O valor registrado no aluguel é preservado mesmo que o preço de referência do item seja posteriormente alterado.
+
+### Configurações
+
+O menu **Configurações** foi pensado para o empreendedor que administra o negócio sozinho e evita preferências sem utilidade:
+
+- **Dados do negócio:** nome de exibição na interface.
+- **Rotina de aluguel:** antecedência para a tarefa de separação no painel **Hoje** e duração sugerida para novos aluguéis.
+- **Demonstração:** restauração do cenário fictício após confirmação, sem alterar os demais cenários.
+- **Sobre esta versão:** descrição do que funciona na demo e limites em relação ao produto futuro.
+
+As preferências e cadastros são independentes entre os cenários (festas, livros, equipamentos e veículos) e **não são persistidos**. Recarregar a página restaura os exemplos.
+
 **Limitações:** este comportamento é uma simulação front-end. O navegador não compartilha informações com outros usuários ou abas e não oferece proteção transacional real, autenticação, banco de dados nem sincronização. Em produção, a disponibilidade deve ser revalidada no servidor sob controle de concorrência para evitar dois usuários reservarem a última unidade simultaneamente. Também serão necessárias regras para devoluções parciais, manutenção, avarias e períodos de preparação entre aluguéis.
 
 ## Requisitos
@@ -153,7 +175,7 @@ locvia-site/
 
 ## Direção de marca e conteúdo
 
-Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza quatro áreas: **Hoje**, **Aluguéis**, **Meus itens** e **Clientes**. O destaque da demo é um azul índigo aplicado às ações e aos componentes, mantendo a linguagem visual neutra do shadcn/ui. **Não é o produto operacional**.
+Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza cinco áreas: **Hoje**, **Aluguéis**, **Meus itens**, **Clientes** e **Configurações**. O destaque da demo é um azul índigo aplicado às ações e aos componentes, mantendo a linguagem visual neutra do shadcn/ui. **Não é o produto operacional**.
 
 Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
 
