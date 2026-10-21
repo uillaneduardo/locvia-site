@@ -116,7 +116,7 @@
       id,clientId:clients[ci].id,from:offset(from),to:offset(to),status,
       items:lines.map(([pi,qty])=>({id:items[pi].id,qty,price:items[pi].price}))
     }));
-    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1}};
+    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1,logo:null,accent:"#455CD4",mode:"light",accessibility:false}};
   }
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
@@ -308,17 +308,42 @@
   }
 
   // Preferências mínimas ligadas ao trabalho solo, independentes para cada cenário da demo.
+  function logoPreviewMarkup() {
+    return settings().logo
+      ? '<img src="'+safe(settings().logo)+'" alt="Logotipo atual de '+safe(settings().name)+'">'
+      : '<div class="logo-placeholder">'+icon("box")+'<span>Sem logotipo</span></div>';
+  }
+
   function settingsView(){
     const prefs=settings();
     return heading("Seu jeito de trabalhar","Configurações","Ajustes do negócio e da rotina de aluguéis neste cenário.")+infoBanner()+
       '<div class="settings-layout"><section class="panel settings-panel"><div class="panel-head"><div><h2>Dados do negócio</h2><p>Como a sua empresa aparece no Locvia</p></div>'+icon("settings")+'</div>'+
       '<form id="settings-form"><div class="settings-form-body"><label class="form-field wide">Nome do negócio<input name="businessName" maxlength="70" required value="'+safe(prefs.name)+'"></label>'+
-      '<div class="settings-preview"><span class="round-initials">'+safe(config().initials)+'</span><div><strong>'+safe(prefs.name)+'</strong><small>Cenário de '+safe(config().display.toLowerCase())+'</small></div></div>'+
+      '<div class="settings-preview"><span id="settings-brand-avatar" class="round-initials'+(prefs.logo?" has-logo":"")+'">'+(prefs.logo?'<img class="branding-logo" src="'+safe(prefs.logo)+'" alt="Logo do negócio">':safe(config().initials))+'</span><div><strong>'+safe(prefs.name)+'</strong><small>Cenário de '+safe(config().display.toLowerCase())+'</small></div></div>'+
+      '<div class="personalization-section" id="brand-config"><h3>Logotipo do negócio</h3><p class="section-description">Use uma imagem quadrada para identificar seu negócio no Locvia. A marca Locvia continua no topo do aplicativo.</p>'+
+      '<div class="logo-settings-layout"><div id="settings-logo-preview" class="logo-sample">'+logoPreviewMarkup()+'</div><div class="logo-controls"><div class="logo-buttons">'+
+      '<input class="visually-hidden-input" type="file" id="logo-file" accept="image/png,image/jpeg,image/webp" aria-describedby="logo-file-help">'+
+      '<label class="outline-btn logo-upload-label" for="logo-file" id="logo-upload-label">'+icon("pencil")+(prefs.logo?" Trocar imagem":" Carregar imagem")+'</label>'+
+      '<button type="button" class="outline-btn" data-action="view-logo" id="logo-view"'+(prefs.logo?"":" hidden")+'>Ver imagem</button>'+
+      '<button type="button" class="outline-btn danger-text" data-action="remove-logo" id="logo-remove"'+(prefs.logo?"":" hidden")+'>Remover</button></div>'+
+      '<p class="logo-help" id="logo-file-help"><strong>PNG, JPG ou WebP</strong> · até <strong>5 MB</strong> · de <strong>128 × 128</strong> a <strong>4096 × 4096 pixels</strong>. Recomendamos 512 × 512. Você pode recortar para 1:1 antes de usar.</p></div></div></div>'+
       '<div class="form-section">Organização dos aluguéis</div>'+
       '<label class="form-field wide">Lembrar de separar com quantos dias de antecedência?<select name="preparationDays">'+[0,1,2,3,5,7].map(n=>'<option value="'+n+'"'+(n===prefs.preparationDays?" selected":"")+'>'+n+(n===1?" dia":" dias")+'</option>').join("")+'</select></label>'+
       '<p class="setting-hint">Esse prazo define quando um aluguel aparece como pendência no painel Hoje.</p>'+
       '<label class="form-field wide">Duração sugerida para novos aluguéis<select name="defaultDays">'+[0,1,2,3,5,7,14,30].map(n=>'<option value="'+n+'"'+(n===prefs.defaultDays?" selected":"")+'>'+n+(n===1?" dia":" dias")+'</option>').join("")+'</select></label>'+
       '<p class="setting-hint">Sugere a data de devolução ao abrir um novo aluguel. Você pode ajustar o período.</p>'+
+      '<div class="personalization-section"><h3>Aparência do Locvia</h3><p class="section-description">Escolha uma cor de destaque para os botões, seleções e ações. As mudanças aparecem na hora.</p>'+
+      '<div class="brand-palette" role="group" aria-label="Paleta de cores de destaque">'+[
+        ["#455CD4","Índigo"],["#0F766E","Verde-petróleo"],["#1D4ED8","Azul"],["#7C3AED","Violeta"],
+        ["#B45309","Âmbar"],["#BE185D","Rosa"],["#0E7490","Ciano"],["#334155","Grafite"]
+      ].map(([color,label])=>'<button type="button" class="color-choice" data-action="accent-preset" data-color="'+color+'" aria-pressed="'+(prefs.accent===color)+'" aria-label="Cor '+label+'" title="'+label+'"><span class="color-dot" style="background:'+color+'">'+(prefs.accent===color?icon("check"):"")+'</span></button>').join("")+'</div>'+
+      '<div class="custom-color-row"><label class="form-field" for="custom-accent">Ou informe uma cor hexadecimal<input type="text" id="custom-accent" maxlength="7" autocomplete="off" spellcheck="false" value="'+safe(prefs.accent)+'" placeholder="#455CD4" aria-describedby="color-feedback"></label>'+
+      '<button type="button" class="outline-btn" data-action="accent-custom">Aplicar cor</button></div><div id="color-feedback" class="color-feedback" role="status" aria-live="polite">Cor atual: '+safe(prefs.accent)+'</div>'+
+      '<div class="form-section">Tema da interface</div><div class="theme-options" role="group" aria-label="Tema da interface">'+
+      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="light" aria-pressed="'+(prefs.mode==="light")+'">'+icon("check")+' Claro</button>'+
+      '<button type="button" class="theme-choice" data-action="set-theme" data-mode="dark" aria-pressed="'+(prefs.mode==="dark")+'">'+icon("clock")+' Escuro</button></div>'+
+      '<label class="accessibility-control" for="accessibility-toggle"><input id="accessibility-toggle" type="checkbox"'+(prefs.accessibility?" checked":"")+'><span><strong>Modo de acessibilidade</strong><small>Texto maior, contraste reforçado, controles maiores, foco destacado e menos animações.</small></span></label>'+
+      '<div class="personalization-note">A aparência e o logotipo são exclusivos desta demonstração. Ao recarregar a página, tudo volta ao padrão.</div></div>'+
       '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferências</button></div></div></form></section>'+
       '<aside class="settings-sidebar"><section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
       '<section class="panel"><div class="panel-head"><div><h2>Sobre esta versão</h2><p>O que você pode experimentar</p></div></div><div class="settings-form-body"><div class="setting-line">'+icon("shield")+'<span>Disponibilidade por período e quantidade</span></div><div class="setting-line">'+icon("clock")+'<span>Acompanhamento de retiradas e devoluções</span></div><div class="setting-line">'+icon("users")+'<span>Clientes e histórico de aluguéis</span></div><p class="setting-hint">Autenticação, notificações automáticas, pagamentos e sincronização entre usuários não fazem parte desta demonstração.</p></div></section></aside></div>';
@@ -434,7 +459,8 @@
     screen.innerHTML=views[state.view]();
     $("crumb").textContent=titles[state.view];
     $("workspace-name").textContent=settings().name;
-    $("workspace-symbol").textContent=config().initials;
+    paintPersonalization();
+    updateLogoBrand();
     sectorSelect.value=state.segment;
     document.querySelectorAll(".nav-link").forEach(el=>{
       const active=el.dataset.view===state.view;
