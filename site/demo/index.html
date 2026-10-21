@@ -33,6 +33,7 @@
     <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h13v11H2zM15 10h4l3 4v3h-7M6 17a2 2 0 1 0 4 0M17 17a2 2 0 1 0 4 0"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
     <symbol id="i-help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.4a2.6 2.6 0 1 1 4.1 2.1c-1.2.8-1.6 1.3-1.6 2.4M12 17h.01"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14A9 9 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z"/></symbol>
@@ -68,6 +69,7 @@
         <div class="top-left"><button class="menu-toggle" id="menu-toggle" aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menu"><svg class="ico"><use href="#i-menu"/></svg></button><span class="mobile-business-logo" id="mobile-business-logo" aria-label="Identidade visual do negócio">FA</span><div class="breadcrumb"><span>Locvia</span><svg class="ico"><use href="#i-chevron"/></svg><strong id="crumb">Hoje</strong></div></div>
         <div class="top-right">
           <label class="sector-switch"><span>Testar com</span><select id="sector" aria-label="Tipo de negócio na demonstração"><option value="festas">Festas e decoração</option><option value="livros">Livros</option><option value="equipamentos">Equipamentos</option><option value="veiculos">Veículos</option></select><svg class="ico"><use href="#i-down"/></svg></label>
+          <button class="notification-trigger" type="button" data-action="open-notifications" id="notification-trigger" aria-label="Abrir avisos do negócio" title="Avisos do negócio"><svg class="ico" aria-hidden="true"><use href="#i-bell"/></svg><span class="notification-count" id="notification-count" hidden>0</span></button>
           <a class="help-trigger" href="/ajuda/" title="Central de Ajuda" aria-label="Abrir Central de Ajuda e perguntas frequentes"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg></a>
           <span class="top-demo"><span class="demo-beacon"></span> Demo</span>
         </div>
