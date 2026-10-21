@@ -273,7 +273,7 @@
         return '<article class="item-list-row"><button class="item-row-open" type="button" data-item="'+pid+'" aria-label="Abrir detalhes de '+name+'"><span class="item-small-emoji" aria-hidden="true">'+emoji+'</span>'+
           '<span class="item-row-name"><strong>'+name+'</strong><small>'+cat+'</small></span>'+
           '<span class="item-row-stock"><strong class="'+(v.free===0?"none":"")+'">'+v.free+' / '+p.stock+'</strong><small>Livres no período</small></span>'+
-          '<span class="item-row-price">'+money(p.price)+'</span>'+icon("chevron")+'</button>'+
+          '<span class="item-row-price">'+money(p.price)+'</span><span class="item-row-detail"><span>Detalhes</span>'+icon("chevron")+'</span></button>'+
           '<div class="item-row-actions">'+actions+'</div></article>';
       }
       return '<article class="item-card compact-item-card"><button type="button" class="item-card-open" data-item="'+pid+'" aria-label="Abrir detalhes de '+name+'">'+
@@ -282,7 +282,8 @@
         '<span class="availability-line"><span>Livres no período</span><strong class="'+(v.free===0?"none":"")+'">'+v.free+' / '+p.stock+'</strong></span>'+
         '<span class="meter" role="img" aria-label="'+v.free+' de '+p.stock+' unidades disponíveis"><span style="width:'+v.pct+'%"></span></span>'+
         '<span class="item-availability-caption">'+safe(v.caption)+'</span>'+
-        '<span class="card-footer"><span>Valor por aluguel</span><strong>'+money(p.price)+'</strong></span></span></button>'+
+        '<span class="card-footer"><span>Valor por aluguel</span><strong>'+money(p.price)+'</strong></span>'+
+        '<span class="item-open-hint">Detalhes '+icon("chevron")+'</span></span></button>'+
         '<div class="card-actions">'+actions+'</div></article>';
     }).join("")||'<div class="panel empty-items"><div class="placeholder"><strong>Nenhum item encontrado.</strong>Experimente outra busca ou cadastre um novo item.</div></div>';
     return heading("O que você tem","Meus itens","Confira quantas unidades estão livres e com quem estão as outras.",'<button type="button" class="primary-btn" data-action="add-item">'+icon("plus")+' Novo item</button>')+
