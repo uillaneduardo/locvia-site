@@ -852,6 +852,18 @@
     if(kind==="delete-item")openDialog("delete-item",action.dataset.id);
     if(kind==="delete-confirm")performDeletion(action.dataset.entity,action.dataset.id);
     if(kind==="reset-confirm")openDialog("reset-confirm");
+    if(kind==="view-logo"){if(settings().logo)openDialog("logo-view");else notify("Carregue um logotipo antes de visualizar.");}
+    if(kind==="remove-logo"){
+      if(settings().logo){settings().logo=null;updateLogoBrand();notify("Logotipo removido deste negócio.");}
+    }
+    if(kind==="crop-save")saveLogoCrop();
+    if(kind==="crop-center"&&cropState){cropState.panX=0;cropState.panY=0;cropState.zoom=1;const zoom=$("logo-crop-zoom");if(zoom)zoom.value="1";drawLogoCrop();}
+    if(kind==="accent-preset")chooseAccent(action.dataset.color);
+    if(kind==="accent-custom")chooseAccent($("custom-accent")?.value);
+    if(kind==="set-theme"&&["light","dark"].includes(action.dataset.mode)){
+      settings().mode=action.dataset.mode;paintPersonalization();updateAppearanceControls();
+      notify(action.dataset.mode==="dark"?"Modo escuro ativado.":"Modo claro ativado.");
+    }
     if(kind==="close")closeDialog();
     if(kind==="add-line")addLine();
     if(kind==="confirm")createRental();
@@ -884,8 +896,30 @@
       if(input){input.focus();try{input.setSelectionRange(pos,pos);}catch(e){}}
     }
     if(event.target.id==="draft-qty")refreshAvailability();
+    if(event.target.id==="logo-crop-zoom"&&cropState){
+      const zoom=Number(event.target.value);
+      if(zoom>=1&&zoom<=3){cropState.zoom=zoom;drawLogoCrop();}
+    }
+    if(event.target.id==="custom-accent"){
+      const help=$("color-feedback");
+      if(help){
+        const color=validAccent(event.target.value);
+        help.setAttribute("role",color?"status":"alert");
+        help.textContent=color?"Clique em Aplicar cor para usar "+color+".":"Informe # e seis dígitos, como #0F766E.";
+      }
+    }
   });
   document.addEventListener("change",event=>{
+    if(event.target.id==="logo-file"){
+      const file=event.target.files?.[0];event.target.value="";
+      if(file)readLogoFile(file);return;
+    }
+    if(event.target.id==="accessibility-toggle"){
+      settings().accessibility=Boolean(event.target.checked);
+      paintPersonalization();
+      notify(settings().accessibility?"Modo de acessibilidade ativado.":"Modo de acessibilidade desativado.");
+      return;
+    }
     if(event.target.id==="stock-from"){state.stockFrom=event.target.value;render();}
     if(event.target.id==="stock-to"){state.stockTo=event.target.value;render();}
     if(event.target.id==="draft-client"){state.draft.clientId=event.target.value;}
@@ -908,6 +942,29 @@
   });
   overlay.addEventListener("click",closeMenu);
   modal.addEventListener("click",event=>{if(event.target===modal)closeDialog();});
+  modal.addEventListener("pointerdown",event=>{
+    if(event.target.id!=="logo-crop-canvas"||!cropState)return;
+    event.preventDefault();
+    const canvas=event.target;
+    cropState.drag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,x:cropState.panX,y:cropState.panY};
+    canvas.setPointerCapture?.(event.pointerId);
+  });
+  modal.addEventListener("pointermove",event=>{
+    if(!cropState?.drag||cropState.drag.pointerId!==event.pointerId)return;
+    const canvas=$("logo-crop-canvas");
+    if(!canvas)return;
+    event.preventDefault();
+    const width=canvas.getBoundingClientRect().width||LOGO_OUTPUT;
+    const factor=LOGO_OUTPUT/width;
+    cropState.panX=cropState.drag.x+(event.clientX-cropState.drag.startX)*factor;
+    cropState.panY=cropState.drag.y+(event.clientY-cropState.drag.startY)*factor;
+    drawLogoCrop();
+  });
+  for(const endEvent of ["pointerup","pointercancel"]){
+    modal.addEventListener(endEvent,event=>{
+      if(cropState?.drag&&event.pointerId===cropState.drag.pointerId)cropState.drag=null;
+    });
+  }
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){if(!modal.hidden)closeDialog();else closeMenu();}
     const row=event.target.closest("[data-rental].row-click,[data-customer].row-click");
