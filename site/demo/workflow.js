@@ -121,7 +121,7 @@
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
     segment:"festas",view:titles[location.hash.slice(1)]?location.hash.slice(1):"hoje",
-    filter:"todos",search:"",stockFrom:today,stockTo:offset(2),
+    filter:"todos",search:"",itemsMode:"grid",stockFrom:today,stockTo:offset(2),
     draft:null,dialog:null
   };
   const db = () => databases[state.segment];
@@ -254,28 +254,45 @@
       '<div class="table-wrap"><table class="data-table"><thead><tr><th>Número</th><th>Cliente</th><th>Período</th><th>Situação</th><th class="align-end">Valor</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
   }
   function itemsView() {
-    const valid=state.stockFrom<=state.stockTo && state.stockFrom && state.stockTo;
+    const valid=Boolean(state.stockFrom && state.stockTo && state.stockFrom<=state.stockTo);
     const filtered=db().items.filter(p=>searchMatch(p.name+" "+p.category));
-    const cards=filtered.map(p=>{
+    const compact=state.itemsMode==="grid";
+    const toggle='<button type="button" class="outline-btn items-view-toggle" data-action="toggle-items-view" aria-label="'+(compact?"Visualizar itens em lista":"Visualizar itens em cartões")+'" title="'+(compact?"Ver em lista":"Ver em cartões")+'" aria-pressed="'+(!compact)+'">'+icon(compact?"list":"grid")+'<span>'+(compact?"Lista":"Cartões")+'</span></button>';
+    const shared=(p)=>{
       const free=valid?availability(p.id,state.stockFrom,state.stockTo):0;
-      const share=valid?holders(p.id,state.stockFrom,state.stockTo):[];
-      const notes=share.map(r=>{
-        const c=customer(r.clientId);
-        if(r.status==="out")return 'Com '+(c?.name||"Cliente")+(isLate(r)?' · devolução atrasada':' · devolução em '+shortDate(r.to));
-        return 'Reservado para '+(c?.name||"Cliente")+' · '+shortDate(r.from);
-      });
-      return '<article class="item-card"><div class="item-card-top"><div class="item-emoji" aria-hidden="true">'+safe(p.emoji)+'</div><span class="item-code">'+safe(p.id.toUpperCase())+'</span></div>'+
-        '<div class="item-card-body"><span class="item-type">'+safe(p.category)+'</span><h3>'+safe(p.name)+'</h3><div class="availability-line"><span>Disponíveis no período</span><strong class="'+(free===0?"none":"")+'">'+free+' de '+p.stock+'</strong></div>'+
-        '<div class="meter" role="img" aria-label="'+free+' disponíveis de '+p.stock+'"><span style="width:'+(p.stock?Math.round(free/p.stock*100):0)+'%"></span></div>'+
-        '<div class="with-whom">'+icon("info")+'<span>'+safe(notes.length?notes.slice(0,2).join(" / "):"Sem aluguéis nesse período.")+'</span></div>'+
-        '<div class="card-footer"><span>Valor por aluguel*</span><strong>'+money(p.price)+'</strong></div><div class="card-actions"><button class="mini-btn secondary" type="button" data-action="edit-item" data-id="'+safe(p.id)+'">'+icon("pencil")+' Editar</button><button class="mini-btn secondary danger-text" type="button" data-action="delete-item" data-id="'+safe(p.id)+'">'+icon("trash")+' Excluir</button></div></div></article>';
-    }).join("")||'<div class="panel"><div class="placeholder"><strong>Nenhum item encontrado.</strong>Experimente outro termo.</div></div>';
-    return heading("O que você tem","Meus itens","Confira quantas unidades estão livres e com quem estão as outras.",'<button type="button" class="primary-btn" data-action="add-item">'+icon("plus")+' Novo item</button>') +
+      const r=valid?holders(p.id,state.stockFrom,state.stockTo):[];
+      const caption=r.length?(r.some(x=>x.status==="out")?"Com cliente / reservado":"Reservado no período"):"Sem reservas no período";
+      const pct=p.stock?Math.round(free/p.stock*100):0;
+      return {free,caption,pct};
+    };
+    const markup=filtered.map(p=>{
+      const v=shared(p),pid=safe(p.id),name=safe(p.name),cat=safe(p.category),emoji=safe(p.emoji);
+      const actions='<button class="mini-btn secondary" type="button" data-action="edit-item" data-id="'+pid+'" aria-label="Editar '+name+'">'+icon("pencil")+'<span>Editar</span></button>'+
+        '<button class="mini-btn secondary danger-text" type="button" data-action="delete-item" data-id="'+pid+'" aria-label="Excluir '+name+'">'+icon("trash")+'<span>Excluir</span></button>';
+      if(!compact){
+        return '<article class="item-list-row"><button class="item-row-open" type="button" data-item="'+pid+'" aria-label="Abrir detalhes de '+name+'"><span class="item-small-emoji" aria-hidden="true">'+emoji+'</span>'+
+          '<span class="item-row-name"><strong>'+name+'</strong><small>'+cat+'</small></span>'+
+          '<span class="item-row-stock"><strong class="'+(v.free===0?"none":"")+'">'+v.free+' / '+p.stock+'</strong><small>Livres no período</small></span>'+
+          '<span class="item-row-price">'+money(p.price)+'</span>'+icon("chevron")+'</button>'+
+          '<div class="item-row-actions">'+actions+'</div></article>';
+      }
+      return '<article class="item-card compact-item-card"><button type="button" class="item-card-open" data-item="'+pid+'" aria-label="Abrir detalhes de '+name+'">'+
+        '<span class="item-card-top"><span class="item-emoji" aria-hidden="true">'+emoji+'</span><span class="item-code">'+safe(p.id.toUpperCase())+'</span></span>'+
+        '<span class="item-card-body"><span class="item-type">'+cat+'</span><span class="item-card-title">'+name+'</span>'+
+        '<span class="availability-line"><span>Livres no período</span><strong class="'+(v.free===0?"none":"")+'">'+v.free+' / '+p.stock+'</strong></span>'+
+        '<span class="meter" role="img" aria-label="'+v.free+' de '+p.stock+' unidades disponíveis"><span style="width:'+v.pct+'%"></span></span>'+
+        '<span class="item-availability-caption">'+safe(v.caption)+'</span>'+
+        '<span class="card-footer"><span>Valor por aluguel</span><strong>'+money(p.price)+'</strong></span></span></button>'+
+        '<div class="card-actions">'+actions+'</div></article>';
+    }).join("")||'<div class="panel empty-items"><div class="placeholder"><strong>Nenhum item encontrado.</strong>Experimente outra busca ou cadastre um novo item.</div></div>';
+    return heading("O que você tem","Meus itens","Confira quantas unidades estão livres e com quem estão as outras.",'<button type="button" class="primary-btn" data-action="add-item">'+icon("plus")+' Novo item</button>')+
       infoBanner()+
-      '<div class="date-filter"><strong>Ver disponibilidade</strong><label>De <input id="stock-from" type="date" value="'+safe(state.stockFrom)+'"></label><label>Até <input id="stock-to" type="date" value="'+safe(state.stockTo)+'"></label><span class="date-help">Escolha o período antes de prometer um item.</span></div>'+
+      '<div class="date-filter"><strong>Ver disponibilidade</strong><label>De <input id="stock-from" type="date" value="'+safe(state.stockFrom)+'"></label><label>Até <input id="stock-to" type="date" value="'+safe(state.stockTo)+'"></label><span class="date-help">Confira as datas antes de alugar.</span></div>'+
       (!valid?'<div class="warn-inline red" style="margin-bottom:18px">'+icon("alert")+'A data final não pode vir antes da inicial.</div>':"")+
-      '<div class="filters"><label class="field-search" style="margin-left:0">'+icon("search")+'<input id="list-search" value="'+safe(state.search)+'" type="search" placeholder="Buscar item" aria-label="Buscar itens"></label></div><div class="item-grid">'+cards+'</div>'+
-      '<p class="info-after">*Valores apenas ilustrativos. Em um sistema real, cada empresa poderá definir seus preços e regras.</p>';
+      '<div class="filters items-tools"><label class="field-search">'+icon("search")+'<input id="list-search" value="'+safe(state.search)+'" type="search" placeholder="Buscar item" aria-label="Buscar itens"></label>'+
+      '<span class="items-count">'+filtered.length+' '+(filtered.length===1?"item":"itens")+'</span>'+toggle+'</div>'+
+      '<div class="'+(compact?"item-grid":"item-list")+'" id="items-collection">'+markup+'</div>'+
+      '<p class="info-after">Toque em um item para consultar quem está com ele, editar seu cadastro ou excluí-lo.</p>';
   }
   function clientsView() {
     const filtered=db().clients.filter(c=>searchMatch(c.name));
@@ -541,6 +558,34 @@
       '<p class="info-after">Use a ação abaixo para atualizar a situação deste aluguel. Na demonstração, a mudança vale somente nesta aba.</p></div>'+
       dialogFoot(cancel+'<button class="outline-btn" type="button" data-action="close">Fechar</button>'+actionHtml);
   }
+
+  function itemDialog(id) {
+    const p=product(id);
+    if(!p)return dialogHeader("ITEM","Item não encontrado");
+    const from=state.stockFrom,to=state.stockTo;
+    const valid=Boolean(from&&to&&from<=to);
+    const free=valid?availability(id,from,to):0;
+    const using=valid?holders(id,from,to):[];
+    const history=db().rentals.filter(r=>r.items.some(l=>l.id===id)).sort((a,b)=>b.from.localeCompare(a.from)).slice(0,8);
+    const reservations=using.length?using.map(r=>
+      '<div class="item-detail-rental"><span><strong>'+safe(customer(r.clientId)?.name||"Cliente")+'</strong><small>'+
+      safe(r.status==="out"?"Ainda com o cliente":shortDate(r.from)+" a "+shortDate(r.to))+'</small></span>'+statusBadge(r)+'</div>'
+    ).join(""):'<p class="setting-hint">Nenhum aluguel ocupa este item no período selecionado.</p>';
+    const historyMarkup=history.length?history.map(r=>'<button type="button" class="detail-rental-link" data-rental="'+safe(r.id)+'"><span>'+safe(r.id)+' · '+safe(customer(r.clientId)?.name||"Cliente")+'</span>'+icon("chevron")+'</button>').join(""):'<p class="setting-hint">Ainda não há aluguéis para este item.</p>';
+    return dialogHeader("MEUS ITENS","Detalhes de "+p.name)+
+      '<div class="dialog-body"><div class="item-detail-heading"><span class="item-detail-emoji" aria-hidden="true">'+safe(p.emoji)+'</span><div><strong>'+safe(p.name)+'</strong><small>'+safe(p.category)+'</small></div></div>'+
+      '<div class="detail-info item-detail-overview"><div><label>Quantidade total</label><strong>'+p.stock+' unidade(s)</strong></div>'+
+      '<div><label>Valor por aluguel</label><strong>'+money(p.price)+'</strong></div>'+
+      '<div><label>Livres de '+safe(shortDate(from))+' a '+safe(shortDate(to))+'</label><strong class="'+(free===0?"none":"")+'">'+free+' de '+p.stock+'</strong></div>'+
+      '<div><label>Comprometidas nesse período</label><strong>'+(valid?p.stock-free:"—")+' unidade(s) no pico</strong></div></div>'+
+      '<div class="form-section">Com quem está / reservas no período</div><div class="item-rentals">'+reservations+'</div>'+
+      '<div class="form-section">Histórico recente</div><div class="item-history">'+historyMarkup+'</div>'+
+      '<p class="info-after">Os valores e dados desta demonstração não são salvos após recarregar a página.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn danger-text" data-action="delete-item" data-id="'+safe(id)+'">'+icon("trash")+' Excluir</button>'+
+      '<button type="button" class="outline-btn" data-action="close">Fechar</button>'+
+      '<button type="button" class="primary-btn" data-action="edit-item" data-id="'+safe(id)+'">'+icon("pencil")+' Editar item</button>');
+  }
+
   function customerDialog(id){
     const c=customer(id);if(!c)return dialogHeader("CLIENTE","Não encontrado");
     const list=db().rentals.filter(r=>r.clientId===id).sort((a,b)=>b.from.localeCompare(a.from));
@@ -554,7 +599,7 @@
     if(!state.dialog)return;
     const d=state.dialog;
     modal.innerHTML='<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
+      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
@@ -593,6 +638,8 @@
   document.addEventListener("click",event=>{
     const view=event.target.closest("[data-view]");
     if(view){go(view.dataset.view);return;}
+    const selectedItem=event.target.closest("[data-item]");
+    if(selectedItem){openDialog("item",selectedItem.dataset.item);return;}
     const rental=event.target.closest("[data-rental]");
     if(rental){openDialog("rental",rental.dataset.rental);return;}
     const client=event.target.closest("[data-customer]");
@@ -607,6 +654,7 @@
     if(kind==="edit-customer")openDialog("customer-form",action.dataset.id);
     if(kind==="delete-customer")openDialog("delete-customer",action.dataset.id);
     if(kind==="add-item")openDialog("item-form");
+    if(kind==="toggle-items-view"){state.itemsMode=state.itemsMode==="grid"?"list":"grid";render();}
     if(kind==="edit-item")openDialog("item-form",action.dataset.id);
     if(kind==="delete-item")openDialog("delete-item",action.dataset.id);
     if(kind==="delete-confirm")performDeletion(action.dataset.entity,action.dataset.id);
