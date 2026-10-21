@@ -6,11 +6,20 @@ Este diretório reúne as **decisões de produto, marca, experiência e implemen
 
 | Documento | O que contém |
 | --- | --- |
+| [Arquitetura-alvo — API PHP](./arquitetura-api-php.md) | Domínios, endpoints, autenticação, transações, WebSockets e workers assíncronos |
+| [Financeiro, Conta e Contatos](./financeiro-conta-contatos.md) | Modelo de caixa, privacidade, conta, assinatura e canais configuráveis |
 | [Identidade visual](./identidade-visual.md) | Wordmark oficial `locvia.`, cores, tipografia, favicon e regras de aplicação |
 | [Visão do produto](./visao-do-produto.md) | Público-alvo, problema que o Locvia resolve, posicionamento e escopo |
 | [Experiência e regras de aluguel](./experiencia-e-regras.md) | Navegação, ações diárias, disponibilidade, cadastros e estados dos aluguéis |
 | [Demonstração e implementação](./demonstracao-e-implementacao.md) | Arquivos, implantação, comportamento da demo, personalização e limitações |
 | [Checklist de homologação](./checklist-de-homologacao.md) | Validações manuais recomendadas em desktop e mobile |
+
+## Decisões técnicas para o SaaS
+
+- **API operacional em PHP**, rotas públicas HTTPS autenticadas, REST/JSON versionado e regras de negócio sempre validadas no backend.
+- **Interface em HTML, CSS e JavaScript puros** consumindo a API, com WebSockets (WSS) e workers PHP assíncronos **quando houver necessidade real**.
+- **Financeiro da locadora separado do faturamento da assinatura do Locvia**; no protótipo ambos são demonstrativos e não há pagamentos externos.
+- Contatos de suporte futuros gerenciados na plataforma; WhatsApp/Telegram/telefone só aparecem ativos na demo quando há destino válido configurado.
 
 ## Princípios estabelecidos
 
