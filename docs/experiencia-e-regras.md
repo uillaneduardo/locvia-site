@@ -85,3 +85,20 @@ Uma devolução atrasada também aparece **no dia de hoje** como alerta. Isso n�
 O sino do cabeçalho mostra **avisos gerados localmente a partir dos aluguéis**; não há notificações externas. Em **Configurações → Notificações**, é possível ativar/desativar o sino e selecionar categorias independentes: separação, retirada, devolução próxima e devolução atrasada. A antecedência das devoluções pode ser de **0, 1, 2, 3, 5 ou 7 dias**. A antecedência da separação usa o prazo já definido em Configurações.
 
 **Desativar o sino não oculta tarefas na tela Hoje** nem altera reservas ou devoluções. Os avisos são atualizados ao registrar novas ações, são separados por cenário fictício e não persistem após recarregar.
+
+
+## Financeiro do negócio e privacidade visual
+
+A navegação inclui **Financeiro** como tarefa principal. O empreendedor vê por mês **Recebido, Despesas pagas, Saldo do período e A receber**; pode registrar recebimentos parciais de aluguéis, criar despesas e marcar despesas como pagas. Previsto/pendente e caixa efetivo são conceitos distintos. Busca de resultados por mês e filtros de pendências ajudam a decidir quem cobrar ou quais despesas quitar.
+
+Um botão **Ocultar valores / Exibir valores** mascara valores apresentados na interface. Em **Configurações → Privacidade financeira**, a pessoa pode definir **Iniciar com valores ocultos**. Isso facilita a consulta em espaços compartilhados, mas **não substitui controle de acesso**. Valores de edição continuam visíveis nos inputs.
+
+## Minha conta versus Configurações
+
+**Minha conta** reúne identidade do usuário, foto, e-mail de acesso, segurança, sessão e assinatura Locvia. A demonstração permite alterações locais de nome/avatar/e-mail, mas não captura senha; planos, método de pagamento e faturas permanecem em estado sem contratação. O **Financeiro** é da locadora, não da assinatura SaaS.
+
+**Configurações** reúne dados e preferências da empresa ativa, inclusive logo da locadora, cor, alertas e privacidade de valores. Evitar mistura entre personalização do negócio e segurança da conta.
+
+## Ajuda e canais de contato
+
+A Central de Ajuda abre em **nova aba** pelos dois acessos da demo. Um botão flutuante no canto inferior direito, com cor **verde WhatsApp fixa**, abre opções WhatsApp, Telegram (azul fixo), e-mail e telefone. Somente canais com destinos públicos configurados ficam ativos. O gerenciamento futuro ocorrerá na administração da plataforma, com dados limitados disponibilizados a um endpoint público.
