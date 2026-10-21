@@ -128,3 +128,8 @@ html[data-accessibility="on"] .channel-link{min-height:54px}
  .contact-panel{width:min(315px,calc(100vw - 26px))}
  .toast{bottom:82px;right:12px;max-width:calc(100vw - 24px)}
 }
+
+/* A navegação e seus atalhos precisam continuar acessíveis em telas baixas. */
+.sidebar{overflow-y:auto;overscroll-behavior:contain}
+.sidebar .nav{flex:none}
+.sidebar-foot{flex:none}
