@@ -81,6 +81,7 @@ body{min-width:0;max-width:100%;margin:0}
 .contact-panel{max-width:100%}
 /* Grade da tela Hoje: não imponha coluna fixa de 285px quando o painel encolher. */
 @media(max-width:1250px){
+ .stats,.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
  .main-grid{grid-template-columns:minmax(0,1fr)}
  .calendar-layout{grid-template-columns:minmax(0,1fr)}
  .settings-layout{grid-template-columns:minmax(0,1fr)}
@@ -149,3 +150,7 @@ body{min-width:0;max-width:100%;margin:0}
  .compact-item-card .card-actions .mini-btn{min-width:0;padding:8px 4px}
  .finance-period>strong{flex:1 1 95px}
 }
+
+/* Mantém a escolha de acessibilidade acima das regras gerais da grade. */
+html[data-accessibility="on"] .item-grid,
+html[data-accessibility="on"] .settings-layout{grid-template-columns:minmax(0,1fr)}
