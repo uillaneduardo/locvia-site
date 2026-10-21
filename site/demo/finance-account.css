@@ -1,0 +1,118 @@
+/* Financeiro e Minha conta — Locvia, reutilizando tokens e componentes atuais */
+.finance-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;flex-wrap:wrap}
+.finance-period{display:inline-flex;align-items:center;gap:8px}
+.finance-period>strong{font-size:13px;min-width:135px;text-align:center;text-transform:capitalize;color:var(--text)}
+.finance-period button[data-action="finance-prev"] .ico{transform:rotate(180deg)}
+.finance-hide-toggle{gap:8px}
+.finance-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.finance-metric{background:var(--white);border:1px solid var(--line);border-radius:11px;padding:18px;min-width:0}
+.finance-metric-top{display:flex;justify-content:space-between;gap:7px;align-items:center;color:#8797ab;font-size:11px;font-weight:750}
+.finance-metric-top .ico{height:17px;width:17px;color:#98a7b9}
+.finance-metric>strong{display:block;font-size:clamp(19px,2.1vw,27px);line-height:1.2;letter-spacing:-.045em;margin:11px 0 5px;color:var(--text);overflow-wrap:anywhere}
+.finance-metric.primary>strong{color:var(--brand-ink)}
+.finance-metric>small{display:block;font-size:10px;color:#91a0b3;line-height:1.4}
+.finance-help-line{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 17px;background:var(--primary-pale);border:1px solid var(--primary-line);border-radius:9px;margin-bottom:16px;color:var(--text);font-size:11px}
+.finance-help-line strong{font-size:12px;color:var(--brand-ink);white-space:nowrap}
+.finance-help-line span{line-height:1.65}.finance-help-line b{color:var(--brand-ink)}
+.finance-filterbar{gap:7px}
+.finance-filterbar .chip{font-size:11px}
+.finance-table th,.finance-table td{white-space:nowrap}
+.finance-table td strong{font-size:12px}
+.finance-type{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:750;white-space:nowrap}
+.finance-type .ico{height:15px;width:15px}
+.finance-type.income{color:#197b59}.finance-type.expense{color:#a45725}
+.finance-quiet{font-size:10px;color:#9aa7b8}
+.finance-disclaimer{color:#91a0b2;font-size:11px;line-height:1.75;margin-top:16px}
+.finance-disclaimer strong{color:var(--text)}
+.finance-receive-overview{background:var(--primary-pale);border:1px solid var(--primary-line);border-radius:9px;padding:14px 15px;margin-bottom:17px;color:var(--text)}
+.finance-receive-overview strong,.finance-receive-overview span{display:block}
+.finance-receive-overview strong{color:var(--brand-ink);font-size:12px}
+.finance-receive-overview span{font-size:11px;margin-top:5px;line-height:1.7}
+.rental-finance-summary{display:flex;gap:13px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:19px 0 9px;padding:14px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text);font-size:11px}
+.rental-finance-summary strong{font-weight:800}
+.finance-privacy-panel .panel-head>.ico{color:var(--brand-ink)}
+/* Conta pessoal: não confundir cobrança da assinatura com financeiro do negócio */
+.account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.account-grid>.panel{min-width:0}
+.account-picture-line{display:flex;align-items:center;gap:17px;margin-bottom:20px}
+.account-picture-line>div{flex:1;min-width:0}
+.account-big-avatar{height:87px;width:87px;border-radius:21px;overflow:hidden;flex:none;display:grid;place-items:center;background:var(--primary-pale);color:var(--brand-ink);font-size:24px;font-weight:850}
+.account-big-avatar img,.account-top-trigger img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+.account-picture-line .text-btn{margin-left:7px}
+.account-form-actions{display:flex;justify-content:flex-end;margin-top:16px}
+.account-data-line{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line-2)}
+.account-data-line:first-child{padding-top:0}
+.account-data-line:last-child{border-bottom:0}
+.account-data-line span{display:block;color:#8998ac;font-size:11px}
+.account-data-line strong{display:block;color:var(--text);font-size:12px;overflow-wrap:anywhere;margin-top:4px}
+.account-data-line .mini-btn{flex:none}
+.account-subscription-plan{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--primary-pale);border:1px solid var(--primary-line);border-radius:9px;padding:15px;margin-bottom:12px}
+.account-subscription-plan strong,.account-subscription-plan small{display:block}
+.account-subscription-plan strong{font-size:14px;color:var(--brand-ink)}
+.account-subscription-plan small{font-size:10px;color:var(--muted);margin-top:5px}
+.account-empty-billing{min-height:185px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:10px}
+.account-empty-billing>.ico{width:26px;height:26px;color:#aab5c6}
+.account-empty-billing strong{color:var(--text);font-size:13px;margin-top:12px}
+.account-empty-billing p{font-size:11px;line-height:1.7;max-width:310px}
+.account-top-trigger{display:grid;place-items:center;height:38px;width:38px;flex:none;background:var(--primary-pale);color:var(--brand-ink);border:1px solid var(--primary-line);border-radius:50%;font-size:10px;font-weight:800;overflow:hidden}
+.account-top-trigger:hover{outline:2px solid var(--primary-line)}
+/* Contato rápido: verde WhatsApp e azul Telegram NÃO seguem cor personalizável. */
+.contact-widget{position:fixed;right:24px;bottom:23px;z-index:55;display:flex;align-items:flex-end;flex-direction:column;gap:12px}
+.contact-fab{width:56px;height:56px;display:grid;place-items:center;background:#25D366;color:#fff;border:0;border-radius:50%;box-shadow:0 8px 28px rgba(12,60,36,.24);transition:transform .15s,box-shadow .15s;cursor:pointer}
+.contact-fab:hover{background:#1FBD5B;transform:translateY(-2px)}
+.contact-fab svg{width:30px;height:30px}
+.contact-panel{width:min(328px,calc(100vw - 30px));max-height:min(620px,calc(100vh - 105px));overflow-y:auto;background:var(--white);border:1px solid var(--line);border-radius:15px;box-shadow:0 20px 52px rgba(23,33,64,.18);padding:16px}
+.contact-panel[hidden]{display:none}
+.contact-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.contact-panel-head strong{display:block;color:var(--text);font-size:14px}
+.contact-panel-head small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.contact-channels{padding-top:7px}
+.channel-link{display:flex;gap:11px;align-items:center;text-decoration:none;color:var(--text);padding:11px 6px;border-bottom:1px solid var(--line-2);border-radius:7px}
+.channel-link:last-child{border-bottom:0}
+a.channel-link:hover{background:var(--primary-pale)}
+.channel-link .channel-icon{display:grid;place-items:center;flex:none;height:34px;width:34px;border-radius:9px;background:#e8edf8;color:#4c5a72;font-size:20px;font-weight:700}
+.channel-whatsapp .channel-icon{background:#e4f9ec;color:#128C42}
+.channel-telegram .channel-icon{background:#e5f3ff;color:#229ED9}
+.channel-email .channel-icon{background:#edf0ff;color:#465cc5}
+.channel-phone .channel-icon{background:#eef3f6;color:#4c7185}
+.channel-link>span:nth-child(2){min-width:0;flex:1}
+.channel-link strong,.channel-link small{display:block}
+.channel-link strong{font-size:12px}
+.channel-link small{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.channel-link>span:last-child{color:var(--muted)}
+.channel-disabled{opacity:.65;cursor:not-allowed}
+.contact-disclaimer{font-size:10px;line-height:1.6;color:var(--muted);margin:12px 5px 0}
+html[data-mode="dark"] .finance-metric,html[data-mode="dark"] .contact-panel,html[data-mode="dark"] .account-top-trigger{background:var(--white);border-color:var(--line)}
+html[data-mode="dark"] .finance-metric>strong,html[data-mode="dark"] .finance-help-line span,html[data-mode="dark"] .finance-disclaimer strong{color:var(--text)}
+html[data-mode="dark"] .finance-help-line,html[data-mode="dark"] .account-subscription-plan,html[data-mode="dark"] .finance-receive-overview{background:var(--primary-pale);color:var(--text)}
+html[data-mode="dark"] .rental-finance-summary{background:var(--bg)}
+html[data-mode="dark"] .finance-type.income{color:#9ce5c2}
+html[data-mode="dark"] .finance-type.expense{color:#f5c596}
+html[data-mode="dark"] .account-data-line strong,html[data-mode="dark"] .account-empty-billing strong{color:#e5eefc}
+html[data-mode="dark"] .contact-panel{box-shadow:0 20px 50px rgba(0,0,0,.4)}
+html[data-accessibility="on"] .finance-metric>strong{font-size:27px}
+html[data-accessibility="on"] .contact-fab{height:62px;width:62px}
+html[data-accessibility="on"] .channel-link{min-height:54px}
+@media(max-width:1100px){.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.account-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+ .finance-toolbar{align-items:stretch}
+ .finance-period{width:100%;justify-content:space-between}
+ .finance-period>strong{min-width:0;flex:1;font-size:12px}
+ .finance-hide-toggle{width:100%}
+ .finance-summary{gap:9px}
+ .finance-metric{padding:14px 11px}
+ .finance-metric>strong{font-size:20px}
+ .finance-metric-top{font-size:10px}
+ .finance-help-line{flex-direction:column;align-items:flex-start}
+ .finance-filterbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+ .finance-filterbar .chip{flex:none}
+ .account-grid{gap:12px}
+ .account-picture-line{align-items:flex-start}
+ .account-big-avatar{width:70px;height:70px;font-size:19px}
+ .account-top-trigger{width:33px;height:33px}
+ .contact-widget{right:13px;bottom:14px}
+ .contact-fab{height:52px;width:52px}
+ .contact-fab svg{height:28px;width:28px}
+ .topbar .top-right{gap:5px}
+}
