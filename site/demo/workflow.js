@@ -684,7 +684,7 @@
       notify("Valor inválido ou superior ao saldo disponível.");return;
     }
     db().finance.payments.push({id:"P-"+(++db().finance.nextPayment),rentalId:id,amount:round2(amount),date:today});
-    closeDialog();render();notify("Recebimento de "+currency(amount)+" registrado na demonstração.");
+    closeDialog();render();notify("Recebimento registrado na demonstração.");
   }
   function markExpensePaid(id){
     const expense=financeExpenses().find(e=>e.id===id);
