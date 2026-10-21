@@ -65,3 +65,22 @@ Não registrar “homologado em produção” só por atualização no GitHub ou
 - [ ] Desativar os avisos: o contador some, mas as tarefas de **Hoje** continuam.
 - [ ] Recarregar: preferências e dados do cenário demonstrativo retornam ao padrão.
 - [ ] Confirmar que não há solicitação de permissão push, notificações externas ou serviço em segundo plano.
+
+
+## Novo — Financeiro, Minha conta e contatos
+
+- [ ] Navegação **Financeiro** tem o mesmo padrão visual dos demais itens do menu.
+- [ ] Resumo financeiro distingue **recebido**, **despesa paga**, **saldo** e **a receber** por mês, sem dupla contagem.
+- [ ] Registrar pagamento parcial de aluguel e impedir recebimento superior ao valor devido.
+- [ ] Criar despesa, alternar filtro e marcar como paga; o saldo do mês do pagamento muda.
+- [ ] Navegar meses anterior/próximo/atual e conferir rótulos e resultados.
+- [ ] Botão de olho oculta e exibe valores apresentados em todas as telas relevantes.
+- [ ] **Configurações → Privacidade financeira** aplica a preferência padrão ao negócio.
+- [ ] **Minha conta** permite nome, foto e e-mail demonstrativos sem armazenar senha.
+- [ ] Tela de assinatura apresenta estados verdadeiros de demonstração, sem faturas ou cartões falsos.
+- [ ] **Ajuda** abre em nova aba pelo ícone `?` e pelo link no menu.
+- [ ] Botão flutuante abre e fecha painel de contatos, inclusive pelo teclado e em mobile.
+- [ ] WhatsApp e Telegram utilizam cores fixas verde e azul; canais sem destino ficam inativos.
+- [ ] Contato ativo configurado usa link válido, sem expor credenciais.
+- [ ] Em modo escuro, modo acessibilidade e viewport pequeno não há corte de conteúdo.
+- [ ] Recarregar desfaz pagamentos, despesas, foto/e-mail e preferências da demo.
