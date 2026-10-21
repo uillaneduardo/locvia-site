@@ -62,7 +62,7 @@ As áreas **Clientes** e **Meus itens** permitem **criar, consultar, editar e ex
 Na área **Configurações → Dados do negócio**, cada cenário oferece personalização visual independente, aplicada ao front-end da demonstração:
 
 - **Logotipo:** carregar arquivo PNG/JPG/WebP (máximo **5 MiB**, mínimo **128 × 128 px**, máximo **4096 × 4096 px**, recomendação 512 × 512 px), ver imagem atual, trocar ou remover. Um editor usa o canvas do navegador para arrastar, aproximar e recortar o arquivo na proporção **1:1**. O resultado é um PNG **320 × 320 px** gerado localmente, armazenado apenas em memória. O arquivo original não é enviado ao servidor.
-- **Onde aparece:** identificação da locadora no menu lateral e prévia de Configurações. O logotipo institucional da Locvia não é substituído.
+- **Onde aparece:** identificação da locadora no menu lateral, avatar compacto no cabeçalho mobile e prévia de Configurações. O logotipo institucional da Locvia não é substituído.
 - **Cor de destaque:** oito opções predefinidas ou código hexadecimal `#RRGGBB`, com cor do texto do botão ajustada automaticamente segundo a luminância da cor selecionada.
 - **Tema:** claro ou escuro, aplicado à navegação, formulários, painéis e diálogos.
 - **Acessibilidade:** alternância de um modo com controles maiores, foco de teclado reforçado, fonte aumentada em áreas importantes e menos movimento. Não constitui certificação de conformidade com WCAG.
