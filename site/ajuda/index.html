@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="Central de Ajuda do Locvia. Tire dúvidas sobre cadastro de itens, clientes, disponibilidade, aluguéis, retiradas e devoluções.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="canonical" href="https://locvia.com.br/ajuda/">
+  <link rel="stylesheet" href="/ajuda/help.css">
+  <title>Central de Ajuda — Locvia</title>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.4a2.6 2.6 0 1 1 4.1 2.1c-1.2.8-1.6 1.3-1.6 2.4M12 17h.01"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.7"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5v10l-9 5-9-5V7Z"/><path d="m3 7 9 5 9-5M12 12v10"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5v1"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+  </svg>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="logo" href="/" aria-label="Locvia — página inicial"><img src="/assets/favicon.svg" width="33" height="33" alt=""><strong>locvia<span>.</span></strong><span class="logo-suffix">/ ajuda</span></a>
+      <nav class="header-links" aria-label="Navegação principal"><a class="header-site" href="/">Site</a><a class="header-demo" href="/demo/">Experimentar demonstração <svg class="ico"><use href="#i-arrow"/></svg></a></nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <span class="eyebrow"><svg class="ico"><use href="#i-help"/></svg> Central de Ajuda</span>
+        <h1>Como podemos ajudar?</h1>
+        <p>Respostas simples para organizar seus itens, acompanhar aluguéis e não deixar nenhuma devolução passar.</p>
+        <label class="search-box" for="faq-search"><svg class="ico"><use href="#i-search"/></svg><input type="search" id="faq-search" autocomplete="off" placeholder="Buscar uma dúvida... Ex.: item indisponível" aria-label="Buscar nas perguntas frequentes"><kbd>/</kbd></label>
+        <div class="search-meta" role="status" aria-live="polite" id="search-status">Veja os assuntos abaixo ou pesquise por uma palavra.</div>
+      </div>
+    </section>
+    <div class="wrap main-body">
+      <div class="intro" id="inicio">
+        <div><span class="kicker">POR ONDE COMEÇAR</span><h2>O que você quer fazer?</h2><p>Escolha um assunto ou veja as dúvidas logo abaixo.</p></div>
+      </div>
+      <nav class="topics" aria-label="Assuntos da ajuda">
+        <a href="#comecando" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-check"/></svg></span><strong>Primeiros passos</strong><small>Entenda o Locvia</small><span class="topic-arrow">↗</span></a>
+        <a href="#itens" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-box"/></svg></span><strong>Meus itens</strong><small>Cadastro e disponibilidade</small><span class="topic-arrow">↗</span></a>
+        <a href="#alugueis" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-calendar"/></svg></span><strong>Aluguéis</strong><small>Reservar, entregar e receber</small><span class="topic-arrow">↗</span></a>
+        <a href="#clientes" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-users"/></svg></span><strong>Clientes</strong><small>Cadastro e histórico</small><span class="topic-arrow">↗</span></a>
+        <a href="#configuracoes" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-settings"/></svg></span><strong>Configurações</strong><small>Ajustes e dados da demo</small><span class="topic-arrow">↗</span></a>
+      </nav>
+
+      <div class="guide"><div class="guide-icon"><svg class="ico"><use href="#i-info"/></svg></div><div><strong>Esta ajuda descreve a demonstração atual.</strong><p>A demo permite testar ações com dados fictícios. Ela não é uma conta real: os dados não são compartilhados e retornam ao início quando você recarrega a página. Evite informar dados pessoais verdadeiros.</p></div><a href="/demo/">Abrir demo <svg class="ico"><use href="#i-arrow"/></svg></a></div>
+
+      <div class="faq-groups" id="faq-groups">
+        <section class="faq-section" id="comecando" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-check"/></svg></span><div><h2>Primeiros passos</h2><p>Conheça a lógica do Locvia</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>O que é o Locvia?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">O Locvia foi pensado para ajudar quem aluga itens a organizar a rotina: saber o que está disponível, para quem cada item foi alugado, o que precisa ser separado e o que ainda não foi devolvido. O objetivo é ser uma ferramenta prática, inclusive no celular.</div></details>
+            <details class="question"><summary>Por onde começo a usar a demonstração?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Comece pela tela <strong>Hoje</strong> para ver as tarefas pendentes. Em <a href="/demo/#itens">Meus itens</a>, veja o que está livre em cada período. Depois vá para <a href="/demo/#clientes">Clientes</a> e experimente criar um registro. Por fim, em <a href="/demo/#alugueis">Aluguéis</a>, use <strong>Novo aluguel</strong> para testar uma reserva.</div></details>
+            <details class="question"><summary>O Locvia funciona apenas com aluguel de itens para festas?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Não. A mesma ideia pode servir para livros, ferramentas, equipamentos e veículos. Na demonstração, use o seletor <strong>Testar com</strong>, no topo, para alternar entre exemplos desses segmentos. Cada exemplo tem itens e clientes fictícios diferentes.</div></details>
+          </div>
+        </section>
+
+        <section class="faq-section" id="itens" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-box"/></svg></span><div><h2>Meus itens</h2><p>Saiba o que você tem e onde está</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>Como cadastro um novo item para alugar?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Abra <a href="/demo/#itens">Meus itens</a> e toque em <strong>Novo item</strong>. Preencha nome, categoria, quantidade total e valor de referência do aluguel. Depois escolha <strong>Salvar item</strong>. O produto aparecerá no acervo demonstrativo.</div></details>
+            <details class="question"><summary>Como vejo os detalhes de um produto e quem está com ele?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em <strong>Meus itens</strong>, selecione o intervalo desejado nos campos <strong>De</strong> e <strong>Até</strong>. Toque no cartão ou em <strong>Detalhes ›</strong>. O painel mostra a quantidade livre, as reservas que ocupam aquele período, o cliente relacionado e parte do histórico de aluguéis. Você também pode editar o item por ali.</div></details>
+            <details class="question"><summary>Como altero ou excluo um item?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Use <strong>Editar</strong> ou <strong>Excluir</strong> no cartão ou na lista, ou abra os detalhes do item. Para preservar o histórico, a demo não permite excluir um item que já aparece em algum aluguel, mesmo que ele tenha sido concluído. Também não permite reduzir a quantidade total para menos do que já está comprometido em aluguéis ativos.</div></details>
+            <details class="question"><summary>Como alterno entre cartões e lista?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em <strong>Meus itens</strong>, há um botão próximo à busca para trocar entre <strong>Cartões</strong> e <strong>Lista</strong>. No celular, a visualização em cartões usa duas colunas quando há espaço suficiente. As duas formas permitem tocar no item para abrir seus detalhes.</div></details>
+          </div>
+        </section>
+
+        <section class="faq-section" id="alugueis" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-calendar"/></svg></span><div><h2>Aluguéis</h2><p>Do primeiro contato à devolução</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>Como registro um novo aluguel?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Na tela <a href="/demo/#alugueis">Aluguéis</a> ou <strong>Hoje</strong>, clique em <strong>Novo aluguel</strong>. Escolha o cliente, as datas de retirada e devolução, o item e a quantidade. Use <strong>Incluir</strong> para colocá-lo no aluguel e, depois, <strong>Confirmar aluguel</strong>. É necessário ter ao menos um cliente e um item cadastrados.</div></details>
+            <details class="question"><summary>Por que um produto aparece como indisponível?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Pode haver outra reserva para as mesmas datas ou o item ainda estar com um cliente. O Locvia considera as <strong>quantidades e os períodos de cada aluguel</strong> para impedir, na demonstração, uma confirmação acima do estoque disponível. Se o item estiver com alguém e a devolução ainda não tiver sido registrada, ele permanece ocupado até essa atualização.</div></details>
+            <details class="question"><summary>O que significam Reservado, Separado, Com cliente e Devolvido?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer"><strong>Reservado</strong> significa aluguel confirmado, ainda sem preparação registrada. <strong>Separado</strong> indica itens preparados para a retirada. <strong>Com cliente</strong> indica retirada registrada. <strong>Devolvido</strong> significa que o retorno foi registrado e a unidade pode ser considerada livre. Uma retirada ainda não concluída pode aparecer como pendência na tela Hoje.</div></details>
+            <details class="question"><summary>Como marco uma retirada ou uma devolução?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Abra o aluguel na tela <strong>Hoje</strong> ou <strong>Aluguéis</strong>. Siga as ações disponíveis: <strong>Marcar separado → Registrar retirada → Registrar devolução</strong>. Na demo, a retirada só pode ser registrada a partir da data prevista. Ao registrar a devolução, o estoque ocupado por aquele aluguel é liberado.</div></details>
+            <details class="question"><summary>O que acontece quando a devolução atrasa?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">O aluguel aparece com alerta de atraso. O item continua associado ao cliente e indisponível até a devolução ser registrada. Assim, a demo evita que a mesma unidade seja prometida a outra pessoa antes de voltar de fato.</div></details>
+            <details class="question"><summary>Posso alterar datas ou itens de um aluguel confirmado?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Ainda não nesta demonstração. Você pode cancelar um aluguel com situação <strong>Reservado</strong> ou <strong>Separado</strong> e criar outro registro com os dados corretos. A edição de aluguéis existentes precisará ser tratada no desenvolvimento do produto completo.</div></details>
+          </div>
+        </section>
+
+        <section class="faq-section" id="clientes" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-users"/></svg></span><div><h2>Clientes</h2><p>Quem alugou cada coisa</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>Como cadastro ou altero um cliente?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Abra <a href="/demo/#clientes">Clientes</a> e clique em <strong>Novo cliente</strong>. O nome é obrigatório; telefone, e-mail e observações são opcionais. Para atualizar um cadastro, use <strong>Editar</strong> na lista ou no painel de detalhes do cliente.</div></details>
+            <details class="question"><summary>Como descubro o que determinado cliente alugou?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em <strong>Clientes</strong>, toque na linha de um cliente para consultar seus aluguéis. Em <strong>Meus itens</strong>, toque no produto para ver as reservas que ocupam o período selecionado e o nome do cliente relacionado.</div></details>
+            <details class="question"><summary>Por que não consigo excluir um cliente?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Se houver algum aluguel vinculado ao cliente, a demonstração bloqueia a exclusão para preservar o histórico dos registros. Nesse caso, você ainda pode editar o cadastro.</div></details>
+          </div>
+        </section>
+
+        <section class="faq-section" id="configuracoes" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-settings"/></svg></span><div><h2>Configurações e demonstração</h2><p>Seu negócio, suas preferências</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>O que posso ajustar em Configurações?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Você pode alterar o nome exibido para o negócio, escolher com quantos dias de antecedência um aluguel deve aparecer como pendência de separação e definir uma duração sugerida ao abrir um novo aluguel. Toque em <strong>Salvar preferências</strong> para aplicar os ajustes no cenário atual.</div></details>
+            <details class="question"><summary>Por que meus cadastros somem depois de atualizar a página?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Porque a demonstração utiliza <strong>dados fictícios na memória do navegador</strong>. Ao recarregar a página, os cadastros e alterações voltam ao exemplo inicial. Nesta versão não há conta, banco de dados ou sincronização com outras pessoas.</div></details>
+            <details class="question"><summary>Como volto aos dados de exemplo?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Abra <a href="/demo/#configuracoes">Configurações</a> e selecione <strong>Restaurar exemplos</strong>. Confirme a ação. Ela reinicia apenas o tipo de negócio selecionado. Recarregar a página também restaura todos os cenários da demo.</div></details>
+            <details class="question"><summary>Existe envio de mensagens, pagamentos ou lembretes automáticos?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Não nesta demonstração. O painel <strong>Hoje</strong> mostra lembretes dentro da aplicação, mas não envia notificações externas. Login, pagamentos, mensagens automáticas e uso compartilhado por várias pessoas exigem a versão operacional do produto.</div></details>
+          </div>
+        </section>
+      </div>
+      <div class="no-results" id="no-results" hidden><svg class="ico"><use href="#i-search"/></svg><h3>Nenhuma resposta encontrada.</h3><p>Tente outras palavras ou escolha um dos assuntos acima.</p><button id="clear-search" type="button">Limpar pesquisa</button></div>
+
+      <section class="contact" aria-labelledby="help-contact-heading">
+        <div class="contact-icon"><svg class="ico"><use href="#i-mail"/></svg></div>
+        <div><span class="kicker">AINDA COM DÚVIDAS?</span><h2 id="help-contact-heading">Precisa falar com a gente?</h2><p>Conte sua dúvida ou dificuldade. Estamos construindo o Locvia para facilitar a rotina de quem trabalha com aluguéis.</p></div>
+        <a href="mailto:uillaneduardo@ulln.com.br?subject=Locvia%20-%20D%C3%BAvida%20sobre%20a%20plataforma">Entrar em contato <svg class="ico"><use href="#i-arrow"/></svg></a>
+      </section>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><span>© Locvia · Central de Ajuda</span><span>Desenvolvido por <a href="https://ulln.com.br" rel="noopener noreferrer" target="_blank">ulln ↗</a></span></div></footer>
+  <script src="/ajuda/help.js" defer></script>
+</body>
+</html>
