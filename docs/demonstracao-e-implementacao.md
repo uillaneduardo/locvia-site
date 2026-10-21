@@ -79,3 +79,13 @@ A demo e ajuda usam `Cache-Control: no-store` na configuração atual do Nginx p
 ## Próximo estágio técnico
 
 No SaaS operacional: construir **API + banco de dados + autenticação + isolamento entre empresas + regras transacionais de estoque + histórico/auditoria**. A demo atual é referência de experiência de uso, **não** backend reutilizável diretamente.
+
+
+## Calendário e notificações locais
+
+- `site/demo/calendar-notifications.css` estiliza o seletor lista/calendário, o calendário mensal e os avisos.
+- `site/demo/workflow.js` calcula o calendário a partir dos mesmos registros usados na lista e gera os avisos com as preferências atuais do cenário.
+- O modo calendário inclui mês anterior, mês seguinte, retorno a Hoje, seleção de dia, eventos com status e abertura de detalhes; no celular, eventos compactos.
+- O sino do cabeçalho apresenta alertas para separação, retirada, devoluções próximas e devoluções atrasadas. Configurações permite gerir categorias e antecedência das devoluções.
+- **Não existe Web Push, e-mail, SMS, WhatsApp, execução em segundo plano, sincronização com servidor, entrega agendada ou permissão de notificação do navegador**. São indicadores internos da interface, calculados somente enquanto a demo estiver aberta.
+- Desligar o sino **não desativa** a lista de tarefas de Hoje. Nada persiste após recarregar a página.
