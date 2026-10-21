@@ -51,3 +51,17 @@ Use este roteiro **após atualizar o container**, verificando em navegador deskt
 ## Critério de aceite
 
 Não registrar “homologado em produção” só por atualização no GitHub ou checks automatizados. Registrar manualmente **data**, **navegador**, **dispositivo**, **resultado** e **pendências** após o deploy.
+
+
+## Novo — calendário e avisos
+
+- [ ] Alternar **Lista / Calendário** sem perder busca e filtros.
+- [ ] Navegar entre meses, voltar a Hoje e selecionar um dia com aluguéis.
+- [ ] Abrir um aluguel pelo calendário; alterar seu estado e conferir o resultado.
+- [ ] Testar os marcadores e a lista de aluguéis do dia no celular.
+- [ ] Conferir indicação de atraso no dia atual sem liberar o estoque pendente.
+- [ ] Abrir o sino, entrar em **Configurações → Notificações** e escolher categorias.
+- [ ] Conferir a antecedência de devolução de 0 a 7 dias e o contador atualizado.
+- [ ] Desativar os avisos: o contador some, mas as tarefas de **Hoje** continuam.
+- [ ] Recarregar: preferências e dados do cenário demonstrativo retornam ao padrão.
+- [ ] Confirmar que não há solicitação de permissão push, notificações externas ou serviço em segundo plano.
