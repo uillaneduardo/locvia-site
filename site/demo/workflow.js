@@ -566,6 +566,214 @@
     }catch(_){notify("Não foi possível concluir o recorte. Tente outra imagem.");}
   }
 
+
+  // FINANCEIRO: contas do negócio, independentes da futura cobrança da assinatura SaaS.
+  // Valores em centavos lógicos (duas casas) e lançamentos fictícios na memória da demo.
+  function paidForRental(id){return round2(db().finance.payments.filter(p=>p.rentalId===id).reduce((a,p)=>a+p.amount,0));}
+  function dueForRental(r){return Math.max(0,round2(total(r)-paidForRental(r.id)));}
+  function financialMonthShift(delta){
+    const [y,m]=state.financeMonth.split("-").map(Number);
+    const d=new Date(y,m-1+delta,1,12);
+    state.financeMonth=iso(d).slice(0,7);render();
+  }
+  const financeExpenses=()=>db().finance.expenses;
+  function financeView(){
+    const month=state.financeMonth;
+    const rentals=db().rentals.filter(r=>r.status!=="cancelled"&&r.from.slice(0,7)===month);
+    const payments=db().finance.payments.filter(p=>p.date.slice(0,7)===month);
+    const paidExpenses=financeExpenses().filter(e=>e.paidAt?.slice(0,7)===month);
+    const dueExpenses=financeExpenses().filter(e=>e.due.slice(0,7)===month);
+    const received=round2(payments.reduce((s,p)=>s+p.amount,0));
+    const outgoing=round2(paidExpenses.reduce((s,e)=>s+e.amount,0));
+    const open=round2(rentals.reduce((s,r)=>s+dueForRental(r),0));
+    const payable=round2(dueExpenses.filter(e=>!e.paidAt).reduce((s,e)=>s+e.amount,0));
+    const dateLabel=new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric"}).format(new Date(month+"-01T12:00:00"));
+    const eye='<button type="button" class="outline-btn finance-hide-toggle" data-action="finance-toggle" aria-pressed="'+state.financeHidden+'" aria-label="'+(state.financeHidden?"Exibir valores financeiros":"Ocultar valores financeiros")+'">'+icon(state.financeHidden?"eye":"eye-off")+' '+(state.financeHidden?"Exibir valores":"Ocultar valores")+'</button>';
+    const nav='<div class="finance-period"><button type="button" class="icon-btn" data-action="finance-prev" aria-label="Mês anterior">'+icon("chevron")+'</button><strong>'+safe(dateLabel)+'</strong><button type="button" class="icon-btn" data-action="finance-next" aria-label="Próximo mês">'+icon("chevron")+'</button><button class="outline-btn" type="button" data-action="finance-now">Mês atual</button></div>';
+    const summary='<section class="finance-summary">'+
+      financeMetric("Recebido",received,"Entradas efetivamente registradas","wallet")+
+      financeMetric("Despesas pagas",outgoing,"Saídas registradas","credit-card")+
+      financeMetric("Saldo do período",round2(received-outgoing),"Recebimentos menos pagamentos","check","primary")+
+      financeMetric("A receber",open,"Aluguéis com saldo pendente","clock")+'</section>';
+    const obligations='<div class="finance-help-line"><strong>Próximas ações</strong><span>Por receber nos aluguéis do mês: <b>'+money(open)+'</b> · despesas em aberto com vencimento no mês: <b>'+money(payable)+'</b></span></div>';
+    const filters=[["all","Todas"],["income","Recebimentos"],["expense","Despesas"],["pending","Pendentes"]];
+    const chips=filters.map(([key,label])=>'<button type="button" data-action="finance-filter" data-filter="'+key+'" class="chip'+(state.financeFilter===key?" active":"")+'" aria-pressed="'+(state.financeFilter===key)+'">'+label+'</button>').join("");
+    const incomeRows=rentals.map(r=>{
+      const due=dueForRental(r),paid=paidForRental(r.id);
+      return {kind:"income",id:r.id,title:customer(r.clientId)?.name||"Cliente",subtitle:"Aluguel "+r.id+" · "+shortDate(r.from),
+        date:r.from,amount:total(r),pending:due>0,settled:due<=0,
+        html:'<td><span class="finance-type income">'+icon("arrow")+' Entrada</span></td><td><strong>'+safe(customer(r.clientId)?.name||"Cliente")+'</strong><small>Aluguel '+safe(r.id)+' · '+shortDate(r.from)+'</small></td>'+
+        '<td>'+money(total(r))+'</td><td>'+(due>0?'<span class="badge ready">Falta '+money(due)+'</span>':'<span class="badge returned">Recebido</span>')+'</td>'+
+        '<td class="align-end">'+(due>0?'<button class="mini-btn" type="button" data-action="finance-receive" data-id="'+safe(r.id)+'">Receber</button>':'<button class="text-btn" type="button" data-rental="'+safe(r.id)+'">Ver</button>')+'</td>'};
+    });
+    const expenseRows=dueExpenses.map(e=>({kind:"expense",id:e.id,date:e.due,amount:e.amount,pending:!e.paidAt,settled:!!e.paidAt,
+      html:'<td><span class="finance-type expense">'+icon("credit-card")+' Saída</span></td><td><strong>'+safe(e.description)+'</strong><small>'+safe(e.category)+' · vence '+shortDate(e.due)+'</small></td>'+
+      '<td>'+money(e.amount)+'</td><td>'+(e.paidAt?'<span class="badge returned">Paga</span>':'<span class="badge ready">A pagar</span>')+'</td>'+
+      '<td class="align-end">'+(!e.paidAt?'<button class="mini-btn secondary" type="button" data-action="finance-pay" data-id="'+safe(e.id)+'">Marcar paga</button>':'<span class="finance-quiet">Concluída</span>')+'</td>'}));
+    let rows=[...incomeRows,...expenseRows].filter(x=>state.financeFilter==="all"||(state.financeFilter==="pending"?x.pending:x.kind===state.financeFilter))
+      .sort((a,b)=>a.date.localeCompare(b.date));
+    const table=rows.map(x=>'<tr>'+x.html+'</tr>').join("")||'<tr><td colspan="5"><div class="placeholder"><strong>Nenhum lançamento encontrado.</strong>Você pode registrar uma despesa ou mudar o período.</div></td></tr>';
+    const prefs='<p class="finance-disclaimer">Os dados são fictícios. <strong>Saldo do período</strong> representa entradas recebidas menos despesas pagas neste mês, não saldo bancário. Pagamentos parciais são considerados; valores previstos e recebidos não devem ser somados.</p>';
+    return heading("Dinheiro em ordem","Financeiro","Acompanhe o que entrou, o que saiu e o que ainda precisa receber ou pagar.",
+      '<button type="button" class="primary-btn" data-action="finance-add-expense">'+icon("plus")+' Nova despesa</button>')+
+      infoBanner()+'<div class="finance-toolbar">'+nav+eye+'</div>'+summary+obligations+
+      '<div class="filters finance-filterbar">'+chips+'</div>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Movimentações e pendências</h2><p>Recebimentos vinculados aos aluguéis e despesas do negócio</p></div></div>'+
+      '<div class="table-wrap"><table class="data-table finance-table"><thead><tr><th>Tipo</th><th>Descrição</th><th>Valor total</th><th>Situação</th><th class="align-end">Ação</th></tr></thead><tbody>'+table+'</tbody></table></div></section>'+prefs;
+  }
+  function financeMetric(label,value,note,iconName,kind=""){
+    return '<div class="finance-metric '+kind+'"><span class="finance-metric-top">'+safe(label)+icon(iconName)+'</span><strong>'+money(value)+'</strong><small>'+safe(note)+'</small></div>';
+  }
+  function expenseDialog(){
+    return dialogHeader("DESPESAS DO NEGÓCIO","Registrar despesa")+
+      '<form id="expense-form"><div class="dialog-body"><div class="form-grid">'+
+      '<label class="form-field wide">Descrição *<input name="description" required maxlength="100" placeholder="Ex.: Transporte de itens"></label>'+
+      '<label class="form-field">Categoria<select name="category"><option>Logística</option><option>Manutenção</option><option>Materiais</option><option>Administrativo</option><option>Outros</option></select></label>'+
+      '<label class="form-field">Valor (R$) *<input name="amount" type="number" step="0.01" min="0.01" max="1000000" required placeholder="0,00"></label>'+
+      '<label class="form-field">Vencimento *<input name="due" type="date" value="'+today+'" required></label>'+
+      '<label class="form-field">Situação<select name="status"><option value="pending">A pagar</option><option value="paid">Já foi paga</option></select></label></div>'+
+      '<p class="setting-hint">Essa despesa afeta o fluxo de caixa apenas quando é marcada como paga.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button><button class="primary-btn" type="submit">'+icon("check")+' Salvar despesa</button>')+'</form>';
+  }
+  function receiveDialog(id){
+    const r=db().rentals.find(x=>x.id===id);
+    if(!r||r.status==="cancelled")return dialogHeader("RECEBIMENTO","Aluguel indisponível");
+    const due=dueForRental(r);
+    if(due<=0)return dialogHeader("RECEBIMENTO","Este aluguel já está quitado");
+    return dialogHeader("REGISTRAR RECEBIMENTO","Recebimento de "+safe(customer(r.clientId)?.name||"cliente"))+
+      '<form id="receive-form"><div class="dialog-body"><div class="finance-receive-overview"><strong>Aluguel '+safe(r.id)+'</strong>'+
+      '<span>Total: '+money(total(r))+' · Recebido: '+money(paidForRental(r.id))+' · Falta: '+money(due)+'</span></div>'+
+      '<input type="hidden" name="rentalId" value="'+safe(id)+'"><label class="form-field">Valor recebido agora (R$) *<input type="number" step="0.01" min="0.01" max="'+due.toFixed(2)+'" required name="amount" value="'+due.toFixed(2)+'"></label>'+
+      '<p class="setting-hint">Aceita pagamento parcial. Não há movimentação bancária, Pix, cartão ou cobrança real nesta demo.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button><button class="primary-btn" type="submit">'+icon("check")+' Confirmar recebimento</button>')+'</form>';
+  }
+  function saveExpense(form){
+    const f=new FormData(form),description=String(f.get("description")||"").trim();
+    const category=String(f.get("category")||"").trim(),amount=Number(f.get("amount")),due=String(f.get("due")||"");
+    const status=String(f.get("status")||"");
+    if(!description||description.length>100||!["Logística","Manutenção","Materiais","Administrativo","Outros"].includes(category)||
+        !Number.isFinite(amount)||amount<=0||amount>1000000||!Number.isInteger(Math.round(amount*100))||
+        Math.abs(amount*100-Math.round(amount*100))>0.00001||!isValidDay(due)||!["pending","paid"].includes(status)){
+      notify("Confira os dados e o valor da despesa.");return;
+    }
+    const id="D-"+(++db().finance.nextExpense);
+    db().finance.expenses.push({id,description,category,amount:round2(amount),due,paidAt:status==="paid"?today:null});
+    state.financeMonth=due.slice(0,7);state.financeFilter="all";
+    closeDialog();go("financeiro");notify("Despesa registrada na demonstração.");
+  }
+  function isValidDay(s){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;
+    const d=new Date(s+"T12:00:00");return !Number.isNaN(d.getTime())&&iso(d)===s;
+  }
+  function saveReceive(form){
+    const fd=new FormData(form),id=String(fd.get("rentalId")||"");
+    const r=db().rentals.find(x=>x.id===id),amount=Number(fd.get("amount"));
+    if(!r||r.status==="cancelled"||!Number.isFinite(amount)||amount<=0||
+      Math.abs(amount*100-Math.round(amount*100))>.00001||round2(amount)>dueForRental(r)){
+      notify("Valor inválido ou superior ao saldo disponível.");return;
+    }
+    db().finance.payments.push({id:"P-"+(++db().finance.nextPayment),rentalId:id,amount:round2(amount),date:today});
+    closeDialog();render();notify("Recebimento de "+currency(amount)+" registrado na demonstração.");
+  }
+  function markExpensePaid(id){
+    const expense=financeExpenses().find(e=>e.id===id);
+    if(!expense||expense.paidAt)return;
+    expense.paidAt=today;render();notify("Despesa marcada como paga no exemplo.");
+  }
+  function financePrivacySettings(){
+    return '<section class="panel finance-privacy-panel"><div class="panel-head"><div><h2>Privacidade financeira</h2><p>Proteja valores de olhares próximos</p></div>'+icon("eye-off")+'</div>'+
+      '<form id="finance-privacy-form"><div class="settings-form-body"><label class="accessibility-control" for="finance-private-default">'+
+      '<input type="checkbox" name="hidden" id="finance-private-default"'+(settings().financeHiddenByDefault?" checked":"")+'>'+
+      '<span><strong>Iniciar com valores ocultos</strong><small>Ao abrir ou trocar de negócio na demonstração, esconder totais e preços apresentados na interface.</small></span></label>'+
+      '<p class="setting-hint">O botão de olho na tela Financeiro permite mostrar ou ocultar a qualquer momento. Não é uma medida de segurança de acesso: formulários de lançamento continuam exibindo os valores digitados.</p>'+
+      '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferência</button></div></div></form></section>';
+  }
+  function saveFinancePrivacy(form){
+    const fd=new FormData(form),hidden=fd.has("hidden");
+    settings().financeHiddenByDefault=hidden;state.financeHidden=hidden;
+    render();notify(hidden?"Valores ocultos por padrão.":"Valores visíveis por padrão.");
+  }
+  // Conta fictícia: autenticação, senha e dados de cobrança exigem API PHP em produção.
+  function accountAvatar(){
+    return demoAccount.photo?'<img alt="Foto do perfil" src="'+safe(demoAccount.photo)+'">':safe(initials(demoAccount.name));
+  }
+  function updateAccountTop(){
+    const badge=$("account-avatar-top");if(badge)badge.innerHTML=accountAvatar();
+  }
+  function accountView(){
+    return heading("Seu espaço","Minha conta","Atualize sua identificação e confira a situação da assinatura.")+
+      infoBanner()+
+      '<div class="account-grid"><section class="panel"><div class="panel-head"><div><h2>Meu perfil</h2><p>Informações pessoais e foto</p></div>'+icon("user")+'</div>'+
+      '<form id="account-profile-form"><div class="settings-form-body"><div class="account-picture-line"><span class="account-big-avatar">'+accountAvatar()+'</span>'+
+      '<div><label class="outline-btn logo-upload-label" for="account-photo-file">'+icon("pencil")+' Alterar foto</label>'+
+      '<input class="visually-hidden-input" type="file" id="account-photo-file" accept="image/png,image/jpeg,image/webp">'+
+      '<button type="button" class="text-btn" data-action="account-remove-photo"'+(demoAccount.photo?"":" hidden")+'>Remover</button>'+
+      '<p class="setting-hint">PNG, JPG ou WebP, até 2 MB; imagem quadrada de até 160 px gerada localmente.</p></div></div>'+
+      '<label class="form-field">Nome de exibição<input name="name" maxlength="90" required value="'+safe(demoAccount.name)+'"></label>'+
+      '<div class="account-form-actions"><button class="primary-btn" type="submit">'+icon("check")+' Salvar perfil</button></div></div></form></section>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Acesso e segurança</h2><p>E-mail de login e senha</p></div>'+icon("shield")+'</div>'+
+      '<div class="settings-form-body"><div class="account-data-line"><div><span>E-mail de acesso</span><strong>'+safe(demoAccount.email)+'</strong></div>'+
+      '<button class="mini-btn secondary" type="button" data-action="account-change-email">Alterar</button></div>'+
+      '<div class="account-data-line"><div><span>Senha</span><strong>••••••••</strong></div>'+
+      '<button class="mini-btn secondary" type="button" data-action="account-password">Alterar</button></div>'+
+      '<p class="setting-hint">Na plataforma real, mudanças de acesso exigirão confirmação segura e verificação de identidade. Não informe senhas reais nesta demo.</p></div></section>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Assinatura Locvia</h2><p>Situação e plano da plataforma</p></div>'+icon("credit-card")+'</div>'+
+      '<div class="settings-form-body"><div class="account-subscription-plan"><span><strong>Demonstração</strong><small>Ambiente de avaliação, sem cobrança ativa</small></span><span class="badge returned">Sem assinatura</span></div>'+
+      '<div class="account-data-line"><div><span>Plano atual</span><strong>Nenhum plano contratado</strong></div></div>'+
+      '<div class="account-data-line"><div><span>Forma de pagamento</span><strong>Não cadastrada</strong></div></div>'+
+      '<a class="outline-btn" href="mailto:uillaneduardo@ulln.com.br?subject=Locvia%20-%20planos%20e%20assinaturas">'+icon("mail")+' Consultar planos</a>'+
+      '<p class="setting-hint">A contratação, a cobrança e a troca de cartão não estão disponíveis na demonstração.</p></div></section>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Histórico da assinatura</h2><p>Faturas e pagamentos do Locvia</p></div>'+icon("wallet")+'</div>'+
+      '<div class="settings-form-body"><div class="account-empty-billing">'+icon("credit-card")+'<strong>Nenhuma cobrança realizada</strong><p>Quando houver uma assinatura ativa na plataforma real, as faturas e os comprovantes ficarão aqui.</p></div></div></section></div>';
+  }
+  function accountEmailDialog(){
+    return dialogHeader("MINHA CONTA","Alterar e-mail de acesso")+
+      '<form id="account-email-form"><div class="dialog-body"><p class="setting-hint">A mudança será simulada somente nesta aba. Em produção, o novo endereço deve ser verificado por e-mail.</p>'+
+      '<label class="form-field">Novo e-mail<input type="email" name="email" required maxlength="150" autocomplete="off" value="'+safe(demoAccount.email)+'"></label></div>'+
+      dialogFoot('<button class="outline-btn" data-action="close" type="button">Cancelar</button><button class="primary-btn" type="submit">Atualizar e-mail na demo</button>')+'</form>';
+  }
+  function passwordDialog(){
+    return dialogHeader("SEGURANÇA DA CONTA","Alterar senha")+
+      '<div class="dialog-body"><div class="warn-inline">'+icon("shield")+'A alteração de senha depende de autenticação real, validação da senha atual, controle de tentativas e sessões. Essas funções ainda não existem no protótipo.</div>'+
+      '<p class="setting-hint">Não solicitamos nem armazenamos senhas nesta demonstração. Na plataforma operacional, esta ação abrirá um fluxo seguro de troca e revogação de sessões.</p></div>'+
+      dialogFoot('<button class="primary-btn" data-action="close" type="button">Entendi</button>');
+  }
+  function saveAccountProfile(form){
+    const fd=new FormData(form),name=String(fd.get("name")||"").trim();
+    if(name.length<2||name.length>90){notify("Digite um nome de exibição válido.");return;}
+    demoAccount.name=name;render();notify("Perfil atualizado nesta demonstração.");
+  }
+  function saveAccountEmail(form){
+    const fd=new FormData(form),email=String(fd.get("email")||"").trim();
+    if(email.length>150||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){notify("Informe um endereço de e-mail válido.");return;}
+    demoAccount.email=email;closeDialog();render();notify("E-mail alterado apenas na demonstração. Nenhuma verificação foi enviada.");
+  }
+  function readAccountPhoto(file){
+    if(!file)return;
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>2*1024*1024||!file.size){
+      notify("Use PNG, JPG ou WebP de até 2 MB.");return;
+    }
+    const reader=new FileReader();
+    reader.onerror=()=>notify("Não foi possível ler a foto.");
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>notify("Imagem inválida.");
+      img.onload=()=>{
+        if(img.naturalWidth<64||img.naturalHeight<64||img.naturalWidth>4096||img.naturalHeight>4096){
+          notify("Use foto com lados entre 64 e 4096 pixels.");return;
+        }
+        const canvas=document.createElement("canvas");
+        canvas.width=160;canvas.height=160;
+        const ctx=canvas.getContext("2d");
+        if(!ctx){notify("Este navegador não permite tratar a foto.");return;}
+        const size=Math.min(img.naturalWidth,img.naturalHeight);
+        ctx.drawImage(img,(img.naturalWidth-size)/2,(img.naturalHeight-size)/2,size,size,0,0,160,160);
+        try{demoAccount.photo=canvas.toDataURL("image/png");render();notify("Foto atualizada na demonstração.");}
+        catch(_){notify("Não foi possível preparar a foto.");}
+      };img.src=reader.result;
+    };reader.readAsDataURL(file);
+  }
+
   function logoPreviewMarkup() {
     return settings().logo
       ? '<img src="'+safe(settings().logo)+'" alt="Logotipo atual de '+safe(settings().name)+'">'
