@@ -324,6 +324,19 @@
     const vals=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4));
     return .2126*vals[0]+.7152*vals[1]+.0722*vals[2];
   }
+  function readableBrandInk(accent,dark){
+    const background=dark?"#182234":"#FFFFFF";
+    const target=dark?"#FFFFFF":"#000000";
+    const contrast=(a,b)=>{
+      const x=luminance(a),y=luminance(b);
+      return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
+    };
+    for(let i=0;i<=20;i++){
+      const color=blendColors(accent,target,i/20);
+      if(contrast(color,background)>=4.5)return color;
+    }
+    return target;
+  }
   function logoImageTag(alt){
     return '<img class="branding-logo" src="'+safe(settings().logo)+'" alt="'+safe(alt)+'">';
   }
@@ -355,8 +368,7 @@
       "--primary-hover":blendColors(accent,dark?"#FFFFFF":"#000000",dark?.18:.13),
       "--primary-pale":blendColors(accent,backdrop,dark?.83:.92),
       "--primary-line":blendColors(accent,backdrop,dark?.64:.75),
-      "--brand-ink":dark?blendColors(accent,"#FFFFFF",.48):
-        (luminance(accent)>.21?blendColors(accent,"#000000",.3):accent),
+      "--brand-ink":readableBrandInk(accent,dark),
       "--on-primary":luminance(accent)>.185?"#101723":"#FFFFFF",
       "--focus-ring":dark?"#FFCC74":"#596FDB"
     };
