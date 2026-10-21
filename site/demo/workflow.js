@@ -10,7 +10,7 @@
   const sectorSelect = $("sector");
   const menuToggle = $("menu-toggle");
   const overlay = $("overlay");
-  const titles = { hoje: "Hoje", alugueis: "Aluguéis", itens: "Meus itens", clientes: "Clientes" };
+  const titles = { hoje: "Hoje", alugueis: "Aluguéis", itens: "Meus itens", clientes: "Clientes", configuracoes: "Configurações" };
   const icons = {
     festas: "🎉", livros: "📚", equipamentos: "🧰", veiculos: "🚗"
   };
@@ -116,7 +116,7 @@
       id,clientId:clients[ci].id,from:offset(from),to:offset(to),status,
       items:lines.map(([pi,qty])=>({id:items[pi].id,qty,price:items[pi].price}))
     }));
-    return {items,clients,rentals,nextId:1000};
+    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:2}};
   }
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
@@ -126,6 +126,7 @@
   };
   const db = () => databases[state.segment];
   const config = () => fixtures[state.segment];
+  const settings = () => db().settings;
   const customer = id => db().clients.find(c=>c.id===id);
   const product = id => db().items.find(p=>p.id===id);
   const total = rental => rental.items.reduce((s,l)=>s+l.qty*l.price,0);
@@ -193,8 +194,8 @@
       const who=customer(r.clientId)?.name||"Cliente";
       const itemNames=r.items.map(l=>product(l.id)?.name||"Item").join(", ");
       if(isLate(r)) tasks.push({r,priority:0,title:"Devolução atrasada",desc:who+" · "+itemNames+" · era para "+shortDate(r.to),className:"red",iconName:"alert"});
-      else if(r.status==="reserved" && r.from<=offset(1) && r.from>=today)
-        tasks.push({r,priority:1,title:"Separar para "+(r.from===today?"hoje":"amanhã"),desc:who+" · "+itemNames,className:"amber",iconName:"box"});
+      else if(r.status==="reserved" && r.from<=offset(settings().preparationDays) && r.from>=today)
+        tasks.push({r,priority:1,title:"Separar para "+(r.from===today?"hoje":r.from===offset(1)?"amanhã":shortDate(r.from)),desc:who+" · "+itemNames,className:"amber",iconName:"box"});
       else if(r.status==="ready" && r.from<=offset(1))
         tasks.push({r,priority:2,title:"Pronto para retirada",desc:who+" · "+itemNames,className:"indigo",iconName:"truck"});
       else if(r.status==="out" && r.to<=offset(1))
@@ -204,7 +205,7 @@
   }
   function todayView() {
     const late=db().rentals.filter(isLate).length;
-    const preparing=db().rentals.filter(r=>r.status==="reserved" && r.from<=offset(1) && r.from>=today).length;
+    const preparing=db().rentals.filter(r=>r.status==="reserved" && r.from<=offset(settings().preparationDays) && r.from>=today).length;
     const withCustomer=db().rentals.filter(r=>r.status==="out").length;
     const availableNow=db().items.reduce((s,p)=>s+availability(p.id,today,today),0);
     const tasks=attention();
@@ -223,7 +224,7 @@
     return heading("Seu dia em ordem","O que precisa da sua atenção","Veja quem está com seus itens, o que separar e as próximas devoluções.",createBtn()) +
       infoBanner() +
       '<section class="stats" aria-label="Resumo do dia">' +
-        stat("Precisam ser separados",String(preparing),"Para hoje e amanhã","box",preparing?"amber":"") +
+        stat("Precisam ser separados",String(preparing),"Até "+shortDate(offset(settings().preparationDays)),"box",preparing?"amber":"") +
         stat("Com clientes",String(withCustomer),"Itens entregues","truck") +
         stat("Devoluções atrasadas",String(late),"Precisam de contato","alert",late?"red":"") +
         stat("Itens livres agora",String(availableNow),"Unidades, considerando os aluguéis","check","indigo") +
@@ -259,16 +260,16 @@
       const share=valid?holders(p.id,state.stockFrom,state.stockTo):[];
       const notes=share.map(r=>{
         const c=customer(r.clientId);
-        if(r.status==="out")return 'Com '+c.name+(isLate(r)?' · devolução atrasada':' · devolução em '+shortDate(r.to));
-        return 'Reservado para '+c.name+' · '+shortDate(r.from);
+        if(r.status==="out")return 'Com '+(c?.name||"Cliente")+(isLate(r)?' · devolução atrasada':' · devolução em '+shortDate(r.to));
+        return 'Reservado para '+(c?.name||"Cliente")+' · '+shortDate(r.from);
       });
       return '<article class="item-card"><div class="item-card-top"><div class="item-emoji" aria-hidden="true">'+safe(p.emoji)+'</div><span class="item-code">'+safe(p.id.toUpperCase())+'</span></div>'+
         '<div class="item-card-body"><span class="item-type">'+safe(p.category)+'</span><h3>'+safe(p.name)+'</h3><div class="availability-line"><span>Disponíveis no período</span><strong class="'+(free===0?"none":"")+'">'+free+' de '+p.stock+'</strong></div>'+
         '<div class="meter" role="img" aria-label="'+free+' disponíveis de '+p.stock+'"><span style="width:'+(p.stock?Math.round(free/p.stock*100):0)+'%"></span></div>'+
         '<div class="with-whom">'+icon("info")+'<span>'+safe(notes.length?notes.slice(0,2).join(" / "):"Sem aluguéis nesse período.")+'</span></div>'+
-        '<div class="card-footer"><span>Valor por aluguel*</span><strong>'+money(p.price)+'</strong></div></div></article>';
+        '<div class="card-footer"><span>Valor por aluguel*</span><strong>'+money(p.price)+'</strong></div><div class="card-actions"><button class="mini-btn secondary" type="button" data-action="edit-item" data-id="'+safe(p.id)+'">'+icon("pencil")+' Editar</button><button class="mini-btn secondary danger-text" type="button" data-action="delete-item" data-id="'+safe(p.id)+'">'+icon("trash")+' Excluir</button></div></div></article>';
     }).join("")||'<div class="panel"><div class="placeholder"><strong>Nenhum item encontrado.</strong>Experimente outro termo.</div></div>';
-    return heading("O que você tem","Meus itens","Confira quantas unidades estão livres e com quem estão as outras.",createBtn()) +
+    return heading("O que você tem","Meus itens","Confira quantas unidades estão livres e com quem estão as outras.",'<button type="button" class="primary-btn" data-action="add-item">'+icon("plus")+' Novo item</button>') +
       infoBanner()+
       '<div class="date-filter"><strong>Ver disponibilidade</strong><label>De <input id="stock-from" type="date" value="'+safe(state.stockFrom)+'"></label><label>Até <input id="stock-to" type="date" value="'+safe(state.stockTo)+'"></label><span class="date-help">Escolha o período antes de prometer um item.</span></div>'+
       (!valid?'<div class="warn-inline red" style="margin-bottom:18px">'+icon("alert")+'A data final não pode vir antes da inicial.</div>':"")+
@@ -280,17 +281,17 @@
     const rows=filtered.map(c=>{
       const rentals=db().rentals.filter(r=>r.clientId===c.id);
       const out=rentals.filter(r=>r.status==="out").length;
-      return '<tr class="row-click" role="button" tabindex="0" data-customer="'+safe(c.id)+'" aria-label="Ver '+safe(c.name)+'"><td><div class="person-cell"><span class="round-initials">'+safe(initials(c.name))+'</span><strong>'+safe(c.name)+'</strong></div></td><td>'+rentals.length+' '+(rentals.length===1?"aluguel":"aluguéis")+'</td><td>'+(out?'<span class="badge out">'+out+' com cliente</span>':'<span class="badge returned">Nada em aberto</span>')+'</td><td class="align-end"><button type="button" class="text-btn" data-customer="'+safe(c.id)+'">Ver detalhes →</button></td></tr>';
+      return '<tr class="row-click" role="button" tabindex="0" data-customer="'+safe(c.id)+'" aria-label="Ver '+safe(c.name)+'"><td><div class="person-cell"><span class="round-initials">'+safe(initials(c.name))+'</span><strong>'+safe(c.name)+'</strong></div></td><td>'+rentals.length+' '+(rentals.length===1?"aluguel":"aluguéis")+'</td><td>'+(out?'<span class="badge out">'+out+' com cliente</span>':'<span class="badge returned">Nada em aberto</span>')+'</td><td class="align-end"><div class="table-actions"><button type="button" class="mini-btn secondary" data-action="edit-customer" data-id="'+safe(c.id)+'">Editar</button><button type="button" class="mini-btn secondary danger-text" data-action="delete-customer" data-id="'+safe(c.id)+'">Excluir</button></div></td></tr>';
     }).join("")||'<tr><td colspan="4"><div class="placeholder">Nenhum cliente encontrado.</div></td></tr>';
-    return heading("Quem aluga com você","Clientes","Veja de forma simples quem tem itens e os aluguéis de cada pessoa.") +
+    return heading("Quem aluga com você","Clientes","Veja de forma simples quem tem itens e os aluguéis de cada pessoa.",'<button type="button" class="primary-btn" data-action="add-customer">'+icon("plus")+' Novo cliente</button>') +
       infoBanner()+'<div class="filters"><label class="field-search" style="margin-left:0">'+icon("search")+'<input id="list-search" type="search" value="'+safe(state.search)+'" placeholder="Buscar cliente" aria-label="Buscar clientes"></label></div>'+
-      '<section class="panel"><div class="panel-head"><div><h2>Seus clientes</h2><p>'+filtered.length+' contatos de demonstração</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Cliente</th><th>Histórico</th><th>Situação</th><th class="align-end">Detalhes</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
+      '<section class="panel"><div class="panel-head"><div><h2>Seus clientes</h2><p>'+filtered.length+' contatos de demonstração</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Cliente</th><th>Histórico</th><th>Situação</th><th class="align-end">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
   }
   function render() {
-    const views={hoje:todayView,alugueis:rentalsView,itens:itemsView,clientes:clientsView};
+    const views={hoje:todayView,alugueis:rentalsView,itens:itemsView,clientes:clientsView,configuracoes:settingsView};
     screen.innerHTML=views[state.view]();
     $("crumb").textContent=titles[state.view];
-    $("workspace-name").textContent=config().name;
+    $("workspace-name").textContent=settings().name;
     $("workspace-symbol").textContent=config().initials;
     sectorSelect.value=state.segment;
     document.querySelectorAll(".nav-link").forEach(el=>{
@@ -333,7 +334,9 @@
   }
   const dialogFoot=(buttons)=>'<footer class="dialog-foot">'+buttons+'</footer>';
   function startNew() {
-    state.draft={clientId:db().clients[0].id,from:offset(1),to:offset(2),items:[]};
+    if(!db().clients.length){go("clientes");notify("Cadastre um cliente antes de registrar um aluguel.");openDialog("customer-form");return;}
+    if(!db().items.length){go("itens");notify("Cadastre um item antes de registrar um aluguel.");openDialog("item-form");return;}
+    state.draft={clientId:db().clients[0].id,from:offset(1),to:offset(settings().defaultDays),items:[]};
     openDialog("new");
   }
   function draftErrors(){
@@ -421,13 +424,13 @@
     return dialogHeader("CLIENTE","Histórico de "+safe(c.name))+
       '<div class="dialog-body"><div class="detail-info"><div><label>Cliente</label><strong>'+safe(c.name)+'</strong></div><div><label>Quantidade de aluguéis</label><strong>'+list.length+'</strong></div></div>'+
       '<div class="form-section">Registros</div><table class="rent-items"><tbody>'+rows+'</tbody></table></div>'+
-      dialogFoot('<button type="button" class="outline-btn" data-action="close">Fechar</button>');
+      dialogFoot('<button type="button" class="outline-btn" data-action="edit-customer" data-id="'+safe(c.id)+'">Editar</button><button type="button" class="outline-btn danger-text" data-action="delete-customer" data-id="'+safe(c.id)+'">Excluir</button><button type="button" class="outline-btn" data-action="close">Fechar</button>');
   }
   function renderDialog(){
     if(!state.dialog)return;
     const d=state.dialog;
     modal.innerHTML='<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):customerDialog(d.id))+"</section>";
+      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
@@ -469,13 +472,21 @@
     const rental=event.target.closest("[data-rental]");
     if(rental){openDialog("rental",rental.dataset.rental);return;}
     const client=event.target.closest("[data-customer]");
-    if(client){openDialog("customer",client.dataset.customer);return;}
+    if(client && !event.target.closest("[data-action]")){openDialog("customer",client.dataset.customer);return;}
     const filter=event.target.closest("[data-filter]");
     if(filter){state.filter=filter.dataset.filter;render();return;}
     const action=event.target.closest("[data-action]");
     if(!action)return;
     const kind=action.dataset.action;
     if(kind==="new")startNew();
+    if(kind==="add-customer")openDialog("customer-form");
+    if(kind==="edit-customer")openDialog("customer-form",action.dataset.id);
+    if(kind==="delete-customer")openDialog("delete-customer",action.dataset.id);
+    if(kind==="add-item")openDialog("item-form");
+    if(kind==="edit-item")openDialog("item-form",action.dataset.id);
+    if(kind==="delete-item")openDialog("delete-item",action.dataset.id);
+    if(kind==="delete-confirm")performDeletion(action.dataset.entity,action.dataset.id);
+    if(kind==="reset-confirm")openDialog("reset-confirm");
     if(kind==="close")closeDialog();
     if(kind==="add-line")addLine();
     if(kind==="confirm")createRental();
@@ -486,7 +497,7 @@
       if(r && ["reserved","ready"].includes(r.status)){r.status="cancelled";closeDialog();render();notify("Aluguel cancelado nesta demonstração. Disponibilidade liberada.");}
     }
     if(kind==="reset"){
-      databases[state.segment]=loadFixture(state.segment);state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
+      databases[state.segment]=loadFixture(state.segment);closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
     }
   });
   document.addEventListener("input",event=>{
