@@ -194,6 +194,7 @@
       const who=customer(r.clientId)?.name||"Cliente";
       const itemNames=r.items.map(l=>product(l.id)?.name||"Item").join(", ");
       if(isLate(r)) tasks.push({r,priority:0,title:"Devolução atrasada",desc:who+" · "+itemNames+" · era para "+shortDate(r.to),className:"red",iconName:"alert"});
+      else if(r.status==="reserved" && r.from<today) tasks.push({r,priority:0,title:"Separação e retirada pendentes",desc:who+" · "+itemNames+" · prevista para "+shortDate(r.from),className:"red",iconName:"alert"});
       else if(r.status==="reserved" && r.from<=offset(settings().preparationDays) && r.from>=today)
         tasks.push({r,priority:1,title:"Separar para "+(r.from===today?"hoje":r.from===offset(1)?"amanhã":shortDate(r.from)),desc:who+" · "+itemNames,className:"amber",iconName:"box"});
       else if(r.status==="ready" && r.from<=offset(1))
@@ -205,7 +206,7 @@
   }
   function todayView() {
     const late=db().rentals.filter(isLate).length;
-    const preparing=db().rentals.filter(r=>r.status==="reserved" && r.from<=offset(settings().preparationDays) && r.from>=today).length;
+    const preparing=db().rentals.filter(r=>r.status==="reserved" && r.from<=offset(settings().preparationDays)).length;
     const withCustomer=db().rentals.filter(r=>r.status==="out").length;
     const availableNow=db().items.reduce((s,p)=>s+availability(p.id,today,today),0);
     const tasks=attention();
@@ -669,7 +670,7 @@
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){if(!modal.hidden)closeDialog();else closeMenu();}
     const row=event.target.closest("[data-rental].row-click,[data-customer].row-click");
-    if(row && (event.key==="Enter"||event.key===" ")){event.preventDefault();row.click();}
+    if(row && event.target===row && (event.key==="Enter"||event.key===" ")){event.preventDefault();row.click();}
     if(!modal.hidden && event.key==="Tab"){
       const focusable=Array.from(modal.querySelectorAll('button:not(:disabled),select:not(:disabled),input:not(:disabled)'));
       if(!focusable.length)return;
