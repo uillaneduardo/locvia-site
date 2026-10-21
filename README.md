@@ -221,6 +221,7 @@ locvia-site/
         ├── index.html      # app demonstrativo
         ├── workflow.css    # tema neutro com destaque índigo
         ├── personalization.css # temas, marca e acessibilidade
+        ├── calendar-notifications.css # calendário e avisos internos
         └── workflow.js     # estado, telas e disponibilidade
     └── ajuda/
         ├── index.html      # central de ajuda e dúvidas frequentes
