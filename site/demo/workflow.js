@@ -361,7 +361,7 @@
   function newDialog(){
     const d=state.draft;
     const clients=db().clients.map(c=>'<option value="'+safe(c.id)+'"'+(c.id===d.clientId?" selected":"")+'>'+safe(c.name)+'</option>').join("");
-    const options=db().items.map(p=>'<option value="'+safe(p.id)+'">'+safe(p.name)+'</option>').join("");
+    const options=[...db().items].sort((a,b)=>Number(availability(b.id,d.from,d.to)>0)-Number(availability(a.id,d.from,d.to)>0)).map(p=>'<option value="'+safe(p.id)+'">'+safe(p.name)+'</option>').join("");
     const lines=d.items.map(l=>{
       const p=product(l.id),free=availability(l.id,d.from,d.to);
       return '<div class="cart-row"><div class="cart-main"><strong>'+safe(p.name)+'</strong><small>'+money(p.price)+' por unidade '+(l.qty>free?' · '+free+' disponível(is) no período':"")+'</small></div><span class="qty">'+l.qty+' un.</span><button type="button" data-action="remove-line" data-item="'+safe(l.id)+'">Remover</button></div>';
