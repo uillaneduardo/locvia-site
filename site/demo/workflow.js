@@ -598,19 +598,30 @@
     const obligations='<div class="finance-help-line"><strong>Próximas ações</strong><span>Por receber nos aluguéis do mês: <b>'+money(open)+'</b> · despesas em aberto com vencimento no mês: <b>'+money(payable)+'</b></span></div>';
     const filters=[["all","Todas"],["income","Recebimentos"],["expense","Despesas"],["pending","Pendentes"]];
     const chips=filters.map(([key,label])=>'<button type="button" data-action="finance-filter" data-filter="'+key+'" class="chip'+(state.financeFilter===key?" active":"")+'" aria-pressed="'+(state.financeFilter===key)+'">'+label+'</button>').join("");
-    const incomeRows=rentals.map(r=>{
-      const due=dueForRental(r),paid=paidForRental(r.id);
-      return {kind:"income",id:r.id,title:customer(r.clientId)?.name||"Cliente",subtitle:"Aluguel "+r.id+" · "+shortDate(r.from),
-        date:r.from,amount:total(r),pending:due>0,settled:due<=0,
-        html:'<td><span class="finance-type income">'+icon("arrow")+' Entrada</span></td><td><strong>'+safe(customer(r.clientId)?.name||"Cliente")+'</strong><small>Aluguel '+safe(r.id)+' · '+shortDate(r.from)+'</small></td>'+
-        '<td>'+money(total(r))+'</td><td>'+(due>0?'<span class="badge ready">Falta '+money(due)+'</span>':'<span class="badge returned">Recebido</span>')+'</td>'+
-        '<td class="align-end">'+(due>0?'<button class="mini-btn" type="button" data-action="finance-receive" data-id="'+safe(r.id)+'">Receber</button>':'<button class="text-btn" type="button" data-rental="'+safe(r.id)+'">Ver</button>')+'</td>'};
+    // Extrato de caixa: pagamentos efetivamente registrados no mês, não o total do aluguel.
+    const incomeRows=payments.map(p=>{
+      const r=db().rentals.find(x=>x.id===p.rentalId);
+      return {kind:"income",id:p.id,date:p.date,pending:false,
+        html:'<td><span class="finance-type income">'+icon("arrow")+' Entrada</span></td>'+
+        '<td><strong>'+safe(r?customer(r.clientId)?.name||"Cliente":"Recebimento")+'</strong><small>Pagamento '+safe(p.id)+' · aluguel '+safe(p.rentalId)+' · '+shortDate(p.date)+'</small></td>'+
+        '<td>'+money(p.amount)+'</td><td><span class="badge returned">Recebido</span></td>'+
+        '<td class="align-end">'+(r?'<button class="text-btn" type="button" data-rental="'+safe(r.id)+'">Ver aluguel</button>':'<span class="finance-quiet">Concluído</span>')+'</td>'};
     });
-    const expenseRows=dueExpenses.map(e=>({kind:"expense",id:e.id,date:e.due,amount:e.amount,pending:!e.paidAt,settled:!!e.paidAt,
-      html:'<td><span class="finance-type expense">'+icon("credit-card")+' Saída</span></td><td><strong>'+safe(e.description)+'</strong><small>'+safe(e.category)+' · vence '+shortDate(e.due)+'</small></td>'+
+    // Cobranças ainda abertas: são direitos a receber, não entradas realizadas.
+    const receivableRows=rentals.filter(r=>dueForRental(r)>0).map(r=>({kind:"pending",id:r.id,date:r.from,pending:true,
+      html:'<td><span class="finance-type pending">'+icon("clock")+' A receber</span></td>'+
+      '<td><strong>'+safe(customer(r.clientId)?.name||"Cliente")+'</strong><small>Saldo do aluguel '+safe(r.id)+' · '+shortDate(r.from)+'</small></td>'+
+      '<td>'+money(dueForRental(r))+'</td><td><span class="badge ready">Pendente</span></td>'+
+      '<td class="align-end"><button class="mini-btn" type="button" data-action="finance-receive" data-id="'+safe(r.id)+'">Receber</button></td>'}));
+    // Despesa quitada: pertence ao mês do pagamento. Pendente: ao mês do vencimento.
+    const expenseRows=financeExpenses().filter(e=>(e.paidAt||e.due).slice(0,7)===month).map(e=>({kind:"expense",id:e.id,date:e.paidAt||e.due,pending:!e.paidAt,
+      html:'<td><span class="finance-type expense">'+icon("credit-card")+' Saída</span></td>'+
+      '<td><strong>'+safe(e.description)+'</strong><small>'+safe(e.category)+' · '+(e.paidAt?'paga em '+shortDate(e.paidAt):'vence '+shortDate(e.due))+'</small></td>'+
       '<td>'+money(e.amount)+'</td><td>'+(e.paidAt?'<span class="badge returned">Paga</span>':'<span class="badge ready">A pagar</span>')+'</td>'+
       '<td class="align-end">'+(!e.paidAt?'<button class="mini-btn secondary" type="button" data-action="finance-pay" data-id="'+safe(e.id)+'">Marcar paga</button>':'<span class="finance-quiet">Concluída</span>')+'</td>'}));
-    let rows=[...incomeRows,...expenseRows].filter(x=>state.financeFilter==="all"||(state.financeFilter==="pending"?x.pending:x.kind===state.financeFilter))
+    const rows=[...incomeRows,...receivableRows,...expenseRows]
+      .filter(x=>state.financeFilter==="all"||
+        (state.financeFilter==="pending"?x.pending:state.financeFilter==="income"?x.kind==="income":x.kind==="expense"))
       .sort((a,b)=>a.date.localeCompare(b.date));
     const table=rows.map(x=>'<tr>'+x.html+'</tr>').join("")||'<tr><td colspan="5"><div class="placeholder"><strong>Nenhum lançamento encontrado.</strong>Você pode registrar uma despesa ou mudar o período.</div></td></tr>';
     const prefs='<p class="finance-disclaimer">Os dados são fictícios. <strong>Saldo do período</strong> representa entradas recebidas menos despesas pagas neste mês, não saldo bancário. Pagamentos parciais são considerados; valores previstos e recebidos não devem ser somados.</p>';
@@ -618,8 +629,8 @@
       '<button type="button" class="primary-btn" data-action="finance-add-expense">'+icon("plus")+' Nova despesa</button>')+
       infoBanner()+'<div class="finance-toolbar">'+nav+eye+'</div>'+summary+obligations+
       '<div class="filters finance-filterbar">'+chips+'</div>'+
-      '<section class="panel"><div class="panel-head"><div><h2>Movimentações e pendências</h2><p>Recebimentos vinculados aos aluguéis e despesas do negócio</p></div></div>'+
-      '<div class="table-wrap"><table class="data-table finance-table"><thead><tr><th>Tipo</th><th>Descrição</th><th>Valor total</th><th>Situação</th><th class="align-end">Ação</th></tr></thead><tbody>'+table+'</tbody></table></div></section>'+prefs;
+      '<section class="panel"><div class="panel-head"><div><h2>Movimentações e pendências</h2><p>Entradas de caixa, cobranças pendentes e despesas</p></div></div>'+
+      '<div class="table-wrap"><table class="data-table finance-table"><thead><tr><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Situação</th><th class="align-end">Ação</th></tr></thead><tbody>'+table+'</tbody></table></div></section>'+prefs;
   }
   function financeMetric(label,value,note,iconName,kind=""){
     return '<div class="finance-metric '+kind+'"><span class="finance-metric-top">'+safe(label)+icon(iconName)+'</span><strong>'+money(value)+'</strong><small>'+safe(note)+'</small></div>';
