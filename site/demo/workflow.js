@@ -116,7 +116,7 @@
       id,clientId:clients[ci].id,from:offset(from),to:offset(to),status,
       items:lines.map(([pi,qty])=>({id:items[pi].id,qty,price:items[pi].price}))
     }));
-    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:2}};
+    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1}};
   }
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
@@ -177,7 +177,7 @@
   }
   const createBtn=()=>'<button type="button" class="primary-btn" data-action="new">'+icon("plus")+' Novo aluguel</button>';
   function infoBanner() {
-    return '<div class="tip-banner">'+icon("info")+'<span><strong>Ambiente de demonstração.</strong> Explore à vontade: os registros são fictícios e as alterações só existem nesta aba. <button class="link-like" type="button" data-action="reset">Restaurar exemplo</button></span></div>';
+    return '<div class="tip-banner">'+icon("info")+'<span><strong>Ambiente de demonstração.</strong> Explore à vontade: os registros são fictícios e as alterações só existem nesta aba. <button class="link-like" type="button" data-action="reset-confirm">Restaurar exemplo</button></span></div>';
   }
   function stat(label,value,sub,iconName,kind="") {
     return '<div class="stat '+kind+'"><div class="stat-head"><span>'+safe(label)+'</span>'+icon(iconName)+'</div><strong>'+safe(value)+'</strong><small>'+safe(sub)+'</small></div>';
@@ -459,7 +459,7 @@
   function startNew() {
     if(!db().clients.length){go("clientes");notify("Cadastre um cliente antes de registrar um aluguel.");openDialog("customer-form");return;}
     if(!db().items.length){go("itens");notify("Cadastre um item antes de registrar um aluguel.");openDialog("item-form");return;}
-    state.draft={clientId:db().clients[0].id,from:offset(1),to:offset(settings().defaultDays),items:[]};
+    state.draft={clientId:db().clients[0].id,from:offset(1),to:offset(1+settings().defaultDays),items:[]};
     openDialog("new");
   }
   function draftErrors(){
