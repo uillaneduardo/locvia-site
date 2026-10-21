@@ -121,7 +121,7 @@
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
     segment:"festas",view:titles[location.hash.slice(1)]?location.hash.slice(1):"hoje",
-    filter:"todos",search:"",itemsMode:"grid",stockFrom:today,stockTo:offset(2),
+    filter:"todos",search:"",itemsMode:"grid",rentalsMode:"list",calendarMonth:today.slice(0,7),calendarDay:today,stockFrom:today,stockTo:offset(2),
     draft:null,dialog:null
   };
   const db = () => databases[state.segment];
@@ -234,24 +234,86 @@
         '<section class="panel"><div class="panel-head"><div><h2>Próximos aluguéis</h2><p>Quem vem buscar e quando</p></div><button class="text-btn" type="button" data-view="alugueis">Ver todos →</button></div><div class="movement-list">'+upcomingHtml+'</div></section>' +
       '</div><p class="info-after">O Locvia é um apoio à rotina: as informações do exemplo mudam quando você registra uma retirada ou devolução.</p>';
   }
+  // Calendário e lista usam a mesma fonte de dados e os mesmos filtros de aluguel.
+  function filteredRentals() {
+    return db().rentals.filter(r=>{
+      if(state.filter==="late" && !isLate(r))return false;
+      if(!["todos","late"].includes(state.filter) && state.filter!==r.status)return false;
+      return searchMatch([r.id,customer(r.clientId)?.name||"",r.items.map(l=>product(l.id)?.name||"Item").join(" "),statusName(r)].join(" "));
+    }).sort((a,b)=>(a.status==="returned")-(b.status==="returned") || a.from.localeCompare(b.from));
+  }
+  const ptWeekdays=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  function dateAt(year,month,day) {
+    return year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+  }
+  function calendarDayRentals(day, all) {
+    // Para estados de atraso, exibimos um alerta HOJE, mesmo que o período previsto já tenha passado.
+    // Não duplicamos indefinidamente um aluguel atrasado em todos os dias futuros.
+    return all.filter(r=>(r.from<=day && day<=r.to) || (day===today && isLate(r)));
+  }
+  function calendarView(rentals) {
+    const [yy,mm]=state.calendarMonth.split("-").map(Number);
+    const monthStart=new Date(yy,mm-1,1,12);
+    const gridStart=new Date(yy,mm-1,1-monthStart.getDay(),12);
+    const monthName=new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric"}).format(monthStart);
+    const dayLimit=new Date(yy,mm,0,12).getDate();
+    const selected=state.calendarDay;
+    const weekdays=ptWeekdays.map(w=>'<span class="calendar-weekday">'+w+'</span>').join("");
+    const cells=Array.from({length:42},(_,i)=>{
+      const dayDate=new Date(gridStart);
+      dayDate.setDate(dayDate.getDate()+i);
+      const day=iso(dayDate);
+      const current=day.startsWith(state.calendarMonth),active=day===selected,isToday=day===today;
+      const booked=calendarDayRentals(day,rentals);
+      const labels=booked.slice(0,2).map(r=>'<span class="calendar-event '+(isLate(r)?"late":safe(r.status))+'">'+safe(customer(r.clientId)?.name||"Cliente")+'</span>').join("");
+      const extra=booked.length>2?'<span class="calendar-more">+'+(booked.length-2)+' outros</span>':"";
+      return '<button type="button" class="calendar-day'+(current?"":" outside")+(active?" selected":"")+(isToday?" today":"")+'" data-action="calendar-day" data-day="'+day+'" aria-pressed="'+active+'" aria-label="'+safe(longDate(day))+'; '+booked.length+' '+(booked.length===1?"aluguel":"aluguéis")+'">'+
+        '<span class="calendar-date">'+dayDate.getDate()+(isToday?'<span class="today-point" aria-label="Hoje"></span>':"")+'</span>'+
+        '<span class="calendar-events">'+labels+extra+'</span></button>';
+    }).join("");
+    const selection=calendarDayRentals(selected,rentals).sort((a,b)=>a.from.localeCompare(b.from));
+    const items=selection.map(r=>'<button type="button" class="calendar-rental-entry" data-rental="'+safe(r.id)+'">'+
+      '<span class="calendar-rental-description"><strong>'+safe(customer(r.clientId)?.name||"Cliente")+'</strong><small>'+safe(r.id)+' · '+safe(r.items.map(l=>product(l.id)?.name||"Item").join(", "))+'</small>'+
+      '<small>'+safe(shortDate(r.from))+' a '+safe(shortDate(r.to))+'</small></span>'+statusBadge(r)+icon("chevron")+'</button>').join("")||
+      '<p class="calendar-empty">Nenhum aluguel para esse dia com os filtros atuais.</p>';
+    return '<div class="calendar-layout"><section class="panel calendar-panel">'+
+      '<header class="calendar-header"><div><h2>'+safe(monthName[0].toUpperCase()+monthName.slice(1))+'</h2><p>'+rentals.length+' aluguéis correspondem aos filtros</p></div>'+
+      '<div class="calendar-navigation"><button type="button" class="outline-btn" data-action="calendar-today">Hoje</button>'+
+      '<button type="button" class="icon-btn" data-action="calendar-prev" aria-label="Mês anterior">'+icon("chevron")+'</button>'+
+      '<button type="button" class="icon-btn" data-action="calendar-next" aria-label="Próximo mês">'+icon("chevron")+'</button></div></header>'+
+      '<div class="calendar-weekdays" aria-hidden="true">'+weekdays+'</div>'+
+      '<div class="calendar-days" role="group" aria-label="Dias do calendário de '+safe(monthName)+'">'+cells+'</div>'+
+      '<footer class="calendar-footer"><span><i class="calendar-key reserved"></i> Reservado</span><span><i class="calendar-key ready"></i> Separado</span><span><i class="calendar-key out"></i> Com cliente</span><span><i class="calendar-key late"></i> Atrasado</span></footer>'+
+      '</section><aside class="panel calendar-selected"><div class="panel-head"><div><h2>'+safe(longDate(selected))+'</h2><p>'+selection.length+' '+(selection.length===1?"aluguel":"aluguéis")+' para este dia</p></div></div>'+
+      '<div class="calendar-rentals">'+items+'</div></aside></div>';
+  }
+  function moveCalendarMonth(delta) {
+    const [y,m]=state.calendarMonth.split("-").map(Number);
+    const date=new Date(y,m-1+delta,1,12);
+    const first=iso(date);
+    state.calendarMonth=first.slice(0,7);
+    state.calendarDay=first;
+    render();
+  }
+
   function rentalsView() {
     const filters=[["todos","Todos"],["reserved","Para separar"],["ready","Separados"],["out","Com clientes"],["late","Atrasados"],["returned","Devolvidos"]];
     const buttons=filters.map(([id,label])=>'<button type="button" class="chip '+(state.filter===id?"active":"")+'" data-filter="'+id+'">'+label+'</button>').join("");
-    const rentals=db().rentals.filter(r=>{
-      if(state.filter==="late" && !isLate(r))return false;
-      if(!["todos","late"].includes(state.filter) && state.filter!==r.status)return false;
-      return searchMatch([r.id,customer(r.clientId)?.name,r.items.map(l=>product(l.id)?.name).join(" "),statusName(r)].join(" "));
-    }).sort((a,b)=> (a.status==="returned")-(b.status==="returned") || a.from.localeCompare(b.from));
+    const rentals=filteredRentals();
     const rows=rentals.map(r=>{
       const who=customer(r.clientId);
       return '<tr class="row-click" tabindex="0" role="button" data-rental="'+safe(r.id)+'" aria-label="Abrir aluguel '+safe(r.id)+'"><td><strong class="id-code">'+safe(r.id)+'</strong><small>'+r.items.length+' '+(r.items.length===1?"tipo de item":"tipos de itens")+'</small></td>'+
-        '<td><div class="person-cell"><span class="round-initials">'+safe(initials(who?.name||""))+'</span><span><strong>'+safe(who?.name||"Cliente")+'</strong></span></div></td>' +
+        '<td><div class="person-cell"><span class="round-initials">'+safe(initials(who?.name||""))+'</span><span><strong>'+safe(who?.name||"Cliente")+'</strong></span></div></td>'+
         '<td>'+shortDate(r.from)+' – '+shortDate(r.to)+'</td><td>'+statusBadge(r)+'</td><td class="align-end"><strong>'+money(total(r))+'</strong></td></tr>';
     }).join("") || '<tr><td colspan="5"><div class="placeholder"><strong>Nenhum aluguel encontrado.</strong>Tente outra busca ou filtro.</div></td></tr>';
-    return heading("Tudo registrado","Seus aluguéis","Consulte rapidamente o que foi reservado, entregue ou devolvido.",createBtn()) +
-      infoBanner()+'<div class="filters">'+buttons+'<label class="field-search">'+icon("search")+'<input id="list-search" type="search" value="'+safe(state.search)+'" placeholder="Buscar cliente ou item" aria-label="Buscar aluguéis"></label></div>' +
-      '<section class="panel"><div class="panel-head"><div><h2>Aluguéis cadastrados</h2><p>'+rentals.length+' registros neste exemplo</p></div></div>'+
+    const toggle='<div class="rental-view-switch" role="group" aria-label="Modo de visualização dos aluguéis">'+
+      '<button type="button" data-action="rentals-list" aria-pressed="'+(state.rentalsMode==="list")+'" aria-label="Ver aluguéis em lista">'+icon("list")+'<span>Lista</span></button>'+
+      '<button type="button" data-action="rentals-calendar" aria-pressed="'+(state.rentalsMode==="calendar")+'" aria-label="Ver aluguéis em calendário">'+icon("calendar")+'<span>Calendário</span></button></div>';
+    const list='<section class="panel"><div class="panel-head"><div><h2>Aluguéis cadastrados</h2><p>'+rentals.length+' registros neste exemplo</p></div></div>'+
       '<div class="table-wrap"><table class="data-table"><thead><tr><th>Número</th><th>Cliente</th><th>Período</th><th>Situação</th><th class="align-end">Valor</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
+    return heading("Tudo registrado","Seus aluguéis","Acompanhe seus aluguéis em lista ou no calendário.",createBtn()) +
+      infoBanner()+'<div class="filters rentals-toolbar">'+buttons+'<label class="field-search">'+icon("search")+'<input id="list-search" type="search" value="'+safe(state.search)+'" placeholder="Buscar cliente ou item" aria-label="Buscar aluguéis"></label>'+toggle+'</div>'+
+      (state.rentalsMode==="calendar"?calendarView(rentals):list);
   }
   function itemsView() {
     const valid=Boolean(state.stockFrom && state.stockTo && state.stockFrom<=state.stockTo);
@@ -860,6 +922,16 @@
     if(!action)return;
     const kind=action.dataset.action;
     if(kind==="new")startNew();
+    if(kind==="rentals-list"){state.rentalsMode="list";render();}
+    if(kind==="rentals-calendar"){state.rentalsMode="calendar";render();}
+    if(kind==="calendar-prev")moveCalendarMonth(-1);
+    if(kind==="calendar-next")moveCalendarMonth(1);
+    if(kind==="calendar-today"){state.calendarMonth=today.slice(0,7);state.calendarDay=today;render();}
+    if(kind==="calendar-day"&&/^\d{4}-\d{2}-\d{2}$/.test(action.dataset.day)){
+      state.calendarDay=action.dataset.day;
+      state.calendarMonth=action.dataset.day.slice(0,7);
+      render();
+    }
     if(kind==="add-customer")openDialog("customer-form");
     if(kind==="edit-customer")openDialog("customer-form",action.dataset.id);
     if(kind==="delete-customer")openDialog("delete-customer",action.dataset.id);
