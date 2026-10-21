@@ -122,3 +122,5 @@ html[data-mode="dark"][data-accessibility="on"]{--focus-ring:#ffce62}
 .mobile-business-logo.has-logo{background:#fff}
 @media(max-width:800px){.mobile-business-logo{display:inline-flex;height:33px;width:33px;margin-left:1px}}
 @media(max-width:560px){.mobile-business-logo{height:30px;width:30px}}
+
+@media(max-width:560px){.topbar .sector-switch select{max-width:clamp(90px,26vw,135px)}.topbar .breadcrumb strong{max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
