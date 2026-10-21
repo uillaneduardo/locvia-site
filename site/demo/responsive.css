@@ -32,6 +32,14 @@ body{min-width:0;max-width:100%;margin:0}
 .settings-layout{grid-template-columns:minmax(0,1.25fr) minmax(0,.76fr)}
 .settings-sidebar{grid-template-columns:minmax(0,1fr)}
 .calendar-layout{grid-template-columns:minmax(0,1.7fr) minmax(0,.78fr)}
+.calendar-header{min-width:0;flex-wrap:wrap}
+.calendar-header>div:first-child{flex:1 1 180px;min-width:0}
+.calendar-navigation{min-width:0;flex:0 1 auto;flex-wrap:wrap}
+.calendar-rental-entry>.badge{flex:none}
+.calendar-rental-description{min-width:0;flex:1 1 auto}
+.calendar-day{min-width:0;overflow:hidden}
+.calendar-date{min-width:0}
+.calendar-events{min-width:0;max-width:100%}
 .account-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .stats,.finance-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
 .item-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,174px),1fr))}
@@ -56,6 +64,10 @@ body{min-width:0;max-width:100%;margin:0}
 .dialog-body{min-width:0;overflow-x:auto}
 .dialog .rent-items{table-layout:auto;max-width:100%}
 .dialog .rent-items td{overflow-wrap:anywhere}
+/* Conteúdo textual longo em detalhes e formulários não força largura da página. */
+.dialog .detail-info strong,.dialog .cart-row,.dialog .item-detail-rental,
+.dialog .item-detail-heading,.account-subscription-plan,.settings-preview,
+.logo-help,.setting-hint,.account-empty-billing,.contact-panel-head,.contact-channels{min-width:0;max-width:100%;overflow-wrap:anywhere}
 .form-field input,.form-field select,.form-field textarea{max-width:100%;min-width:0}
 .primary-btn,.outline-btn,.mini-btn,.task-action,.theme-choice,.chip{max-width:100%}
 .finance-period{flex-wrap:wrap}
