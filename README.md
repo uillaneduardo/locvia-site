@@ -204,35 +204,39 @@ locvia-site/
 ├── .dockerignore
 ├── .gitignore
 ├── README.md
-├── docs/                  # decisões de produto, identidade e checklist
+├── docs/                     # produto, identidade, arquitetura e homologação
 │   ├── README.md
 │   ├── identidade-visual.md
 │   ├── visao-do-produto.md
 │   ├── experiencia-e-regras.md
 │   ├── demonstracao-e-implementacao.md
+│   ├── financeiro-conta-contatos.md
+│   ├── arquitetura-api-php.md
 │   └── checklist-de-homologacao.md
 └── site/
-    ├── index.html          # landing page
+    ├── index.html             # landing page
     ├── styles.css
     ├── assets/
     │   ├── favicon.svg
-    │   ├── locvia-brand.css # wordmark institucional compartilhado
-    │   └── contact-config.js # destinos públicos dos canais de suporte
-    └── demo/
-        ├── index.html      # app demonstrativo
-        ├── workflow.css    # tema neutro com destaque índigo
-        ├── personalization.css # temas, marca e acessibilidade
-        ├── calendar-notifications.css # calendário e avisos internos
-        └── workflow.js     # estado, telas e disponibilidade
+    │   ├── locvia-brand.css   # wordmark institucional
+    │   └── contact-config.js  # canais públicos de suporte
+    ├── demo/
+    │   ├── index.html
+    │   ├── workflow.js
+    │   ├── workflow.css
+    │   ├── personalization.css
+    │   ├── calendar-notifications.css
+    │   ├── finance-account.css
+    │   └── contact-widget.js
     └── ajuda/
-        ├── index.html      # central de ajuda e dúvidas frequentes
-        ├── help.css        # estilos responsivos
-        └── help.js         # busca local e atalho /
+        ├── index.html
+        ├── help.css
+        └── help.js
 ```
 
 ## Direção de marca e conteúdo
 
-Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza cinco áreas: **Hoje**, **Aluguéis**, **Meus itens**, **Clientes** e **Configurações**. A marca institucional **`locvia.`** usa **wordmark em negrito e ponto índigo fixo `#455CD4`**, aplicado no site, na demo e na Central de Ajuda. Os destaques da **interface** começam em índigo, mas o empreendedor pode alterar a cor da UI sem modificar a marca. O estilo é responsivo e neutro, inspirado em princípios de componentes do shadcn/ui. **Não é o produto operacional**.
+Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza sete áreas: **Hoje**, **Aluguéis**, **Meus itens**, **Clientes**, **Financeiro**, **Configurações** e **Minha conta**. A marca institucional **`locvia.`** usa **wordmark em negrito e ponto índigo fixo `#455CD4`**, aplicado no site, na demo e na Central de Ajuda. Os destaques da **interface** começam em índigo, mas o empreendedor pode alterar a cor da UI sem modificar a marca. O estilo é responsivo e neutro, inspirado em princípios de componentes do shadcn/ui. **Não é o produto operacional**.
 
 Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
 
