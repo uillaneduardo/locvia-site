@@ -22,6 +22,8 @@
     <symbol id="i-box" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5v10l-9 5-9-5V7Z"/><path d="m3 7 9 5 9-5M12 12v10"/></symbol>
     <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></symbol>
     <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5v1"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="15" rx="2"/><path d="M2 6V4h16v2m0 8h3"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
@@ -51,6 +53,9 @@
         <a href="#itens" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-box"/></svg></span><strong>Meus itens</strong><small>Cadastro e disponibilidade</small><span class="topic-arrow">↗</span></a>
         <a href="#alugueis" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-calendar"/></svg></span><strong>Aluguéis</strong><small>Reservar, entregar e receber</small><span class="topic-arrow">↗</span></a>
         <a href="#clientes" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-users"/></svg></span><strong>Clientes</strong><small>Cadastro e histórico</small><span class="topic-arrow">↗</span></a>
+        <a href="#financeiro" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-wallet"/></svg></span><strong>Financeiro</strong><small>Entradas, despesas e caixa</small><span class="topic-arrow">↗</span></a>
+        <a href="#conta" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-user"/></svg></span><strong>Minha conta</strong><small>Perfil e assinatura</small><span class="topic-arrow">↗</span></a>
+        <a href="#suporte" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-mail"/></svg></span><strong>Contato rápido</strong><small>Como pedir ajuda</small><span class="topic-arrow">↗</span></a>
         <a href="#configuracoes" class="topic"><span class="topic-icon"><svg class="ico"><use href="#i-settings"/></svg></span><strong>Configurações</strong><small>Ajustes e dados da demo</small><span class="topic-arrow">↗</span></a>
       </nav>
 
@@ -95,6 +100,34 @@
             <details class="question"><summary>Como cadastro ou altero um cliente?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Abra <a href="/demo/#clientes">Clientes</a> e clique em <strong>Novo cliente</strong>. O nome é obrigatório; telefone, e-mail e observações são opcionais. Para atualizar um cadastro, use <strong>Editar</strong> na lista ou no painel de detalhes do cliente.</div></details>
             <details class="question"><summary>Como descubro o que determinado cliente alugou?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em <strong>Clientes</strong>, toque na linha de um cliente para consultar seus aluguéis. Em <strong>Meus itens</strong>, toque no produto para ver as reservas que ocupam o período selecionado e o nome do cliente relacionado.</div></details>
             <details class="question"><summary>Por que não consigo excluir um cliente?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Se houver algum aluguel vinculado ao cliente, a demonstração bloqueia a exclusão para preservar o histórico dos registros. Nesse caso, você ainda pode editar o cadastro.</div></details>
+          </div>
+        </section>
+
+
+        <section class="faq-section" id="financeiro" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-wallet"/></svg></span><div><h2>Financeiro</h2><p>Entradas, saídas e decisões do negócio</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>O que significa saldo do período?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">No <a href="/demo/#financeiro">Financeiro</a>, o saldo do período é <strong>dinheiro recebido menos despesas pagas naquele mês</strong>. Não é saldo bancário nem lucro. O valor <strong>A receber</strong> corresponde a pagamentos ainda pendentes dos aluguéis previstos para o mês e não deve ser somado ao dinheiro recebido como se já tivesse entrado.</div></details>
+            <details class="question"><summary>Como registro um pagamento de aluguel, inclusive parcial?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">No Financeiro, localize o aluguel e clique em <strong>Receber</strong>. Digite o valor efetivamente recebido; você pode registrar apenas parte do total. A demo não deixa registrar mais do que falta pagar. O mesmo aluguel também permite acessar o recebimento pelos seus detalhes.</div></details>
+            <details class="question"><summary>Como cadastro e pago uma despesa?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Clique em <strong>Nova despesa</strong>, informe descrição, categoria, valor, vencimento e se está paga ou pendente. Uma despesa a pagar entra como obrigação. Quando clicar em <strong>Marcar paga</strong>, ela passa a compor as saídas do mês do pagamento.</div></details>
+            <details class="question"><summary>Como escondo os valores do Financeiro?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Na tela Financeiro, use <strong>Ocultar valores / Exibir valores</strong>. Para começar com os valores escondidos, abra <a href="/demo/#configuracoes">Configurações → Privacidade financeira</a> e ative <strong>Iniciar com valores ocultos</strong>. Isso mascara os valores exibidos, mas não protege o acesso aos dados. Em formulários de recebimento ou despesa, os valores digitados continuam visíveis.</div></details>
+            <details class="question"><summary>O Financeiro movimenta dinheiro de verdade?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Não. Todos os pagamentos e despesas aqui são <strong>simulações na memória da página</strong>. Não existe integração com banco, Pix, cartão, cobrança ou relatórios contábeis reais nesta demonstração.</div></details>
+          </div>
+        </section>
+        <section class="faq-section" id="conta" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-user"/></svg></span><div><h2>Minha conta</h2><p>Perfil, acesso e assinatura do Locvia</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>Qual a diferença entre Minha conta e Configurações?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer"><a href="/demo/#conta">Minha conta</a> é o espaço da pessoa usuária: foto, nome, e-mail de login, segurança, plano e faturas da assinatura Locvia. <strong>Configurações</strong> reúne dados e preferências do <strong>negócio que aluga itens</strong>, como logotipo da empresa e notificações. O Financeiro também é do negócio, não da cobrança da assinatura.</div></details>
+            <details class="question"><summary>Como altero foto, nome ou e-mail na demonstração?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em Minha conta, altere o nome de exibição ou escolha uma foto PNG/JPG/WebP de até 2 MB. Para o e-mail, clique em <strong>Alterar</strong> na seção Acesso e segurança. Na demonstração a alteração vale somente nesta aba e nenhum e-mail de verificação é enviado.</div></details>
+            <details class="question"><summary>Posso trocar a senha da minha conta?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">A tela demonstra onde ficará a troca segura de senha, mas o protótipo não coleta ou armazena senhas. Quando houver API autenticada, essa operação exigirá validação da identidade e gestão de sessões. <strong>Não informe uma senha real na demo.</strong></div></details>
+            <details class="question"><summary>Onde vejo o plano e o histórico de pagamento da assinatura?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Em Minha conta, as seções <strong>Assinatura Locvia</strong> e <strong>Histórico da assinatura</strong> mostram que o ambiente atual é uma demonstração sem plano ou faturas. A cobrança real, os métodos de pagamento e o histórico serão integrados ao serviço de assinaturas futuramente.</div></details>
+          </div>
+        </section>
+        <section class="faq-section" id="suporte" data-faq-section>
+          <div class="section-heading"><span class="section-icon"><svg class="ico"><use href="#i-mail"/></svg></span><div><h2>Contato rápido</h2><p>Ajuda sem sair do que você estava fazendo</p></div></div>
+          <div class="questions">
+            <details class="question"><summary>Como peço ajuda pelo WhatsApp, Telegram ou e-mail?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Na demonstração, toque no <strong>botão flutuante verde</strong> no canto inferior direito. Ele abre as opções WhatsApp, Telegram, e-mail e telefone. Apenas canais efetivamente configurados estarão clicáveis; os demais aparecem como <strong>Não configurado</strong>. A identidade verde do WhatsApp e azul do Telegram é mantida independentemente da cor escolhida para a interface.</div></details>
+            <details class="question"><summary>A Central de Ajuda abre sem fechar a plataforma?<svg class="ico"><use href="#i-chevron"/></svg></summary><div class="answer">Sim. O ícone de <strong>interrogação (?)</strong> e o link <strong>Central de Ajuda</strong> dentro da demo abrem <strong>uma nova aba</strong>, preservando sua tela de trabalho.</div></details>
           </div>
         </section>
 
