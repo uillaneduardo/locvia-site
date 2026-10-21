@@ -69,6 +69,20 @@ O favicon atual é um **símbolo reduzido de apoio** já existente no projeto, n
 
 Em **Configurações → Dados do negócio**, a locadora pode carregar seu próprio logotipo; ele aparece em **identificação do negócio**, **cabeçalho mobile** e **prévia de Configurações**. **Nunca substitui o wordmark institucional da Locvia.**
 
+### Avisos informativos na interface
+
+Os componentes da aplicação que representam **informação sobre a demonstração**, como a faixa **“Ambiente de demonstração”**, o cartão lateral **“Você está experimentando”** e o selo **“Demo”**, acompanham a cor de destaque escolhida pela locadora.
+
+Usar os tokens dinâmicos abaixo, em vez de repetir tons de azul índigo fixos no CSS:
+
+- `--primary-pale`: fundo suavemente tonalizado, nos temas claro e escuro.
+- `--primary-line`: borda do aviso e halo do indicador.
+- `--primary`: ponto/sinalizador visual e demais detalhes que suportam o contraste.
+- `--brand-ink`: títulos, ícones e links destacados; calculado com contraste para o fundo.
+- `--text` e `--muted`: informações comuns e textos de apoio, seguindo o tema.
+
+A cor institucional do ponto final de **`locvia.`** é uma exceção explícita e **permanece `#455CD4`**, independentemente do tema ou da cor configurada para o negócio.
+
 ## 4. Regras de consistência
 
 - Escrever **Locvia** em texto corrido, e **`locvia.`** quando for o logo.
