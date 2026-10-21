@@ -1,0 +1,118 @@
+/* Locvia • Calendário de aluguéis e avisos internos da demonstração */
+.rentals-toolbar{align-items:center}
+.rental-view-switch{display:inline-flex;align-items:center;padding:3px;border-radius:10px;border:1px solid var(--line);background:var(--white);gap:3px;flex:none}
+.rental-view-switch button{display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;padding:10px 12px;border-radius:7px;min-height:37px;color:#77859e;font-weight:750;font-size:11px}
+.rental-view-switch button .ico{width:16px;height:16px}
+.rental-view-switch button[aria-pressed="true"]{color:var(--brand-ink);background:var(--primary-pale)}
+.rental-view-switch button:hover:not([aria-pressed="true"]){background:var(--primary-pale)}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(275px,.78fr);gap:15px;align-items:start}
+.calendar-panel,.calendar-selected{min-width:0}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.calendar-header h2{font-size:17px;font-weight:800;letter-spacing:-.027em;margin:0;text-transform:capitalize}
+.calendar-header p{margin:3px 0 0;color:#98a4b7;font-size:10px}
+.calendar-navigation{display:flex;align-items:center;gap:6px}
+.calendar-navigation>.outline-btn{padding:9px 11px}
+.calendar-navigation .icon-btn{width:35px;height:35px}
+.calendar-navigation button[data-action="calendar-prev"] .ico{transform:rotate(180deg)}
+.calendar-weekdays,.calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.calendar-weekdays{background:#fafbfe;border-bottom:1px solid var(--line)}
+.calendar-weekday{padding:10px 4px;text-align:center;font-size:10px;font-weight:800;color:#909db0}
+.calendar-days{gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.calendar-day{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:7px;padding:9px 7px 7px;min-width:0;min-height:101px;background:var(--white);border:0;color:#3c4a63}
+.calendar-day:hover{background:var(--primary-pale)}
+.calendar-day.outside{background:var(--bg);color:#abb5c2}
+.calendar-day.outside:hover{background:var(--primary-pale)}
+.calendar-day.selected{outline:2px solid var(--primary);outline-offset:-2px;position:relative;z-index:1;background:var(--primary-pale)}
+.calendar-date{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;white-space:nowrap}
+.calendar-day.today .calendar-date{color:var(--brand-ink)}
+.today-point{height:5px;width:5px;border-radius:50%;display:inline-block;background:var(--primary)}
+.calendar-events{display:flex;flex-direction:column;gap:3px;min-width:0}
+.calendar-event{padding:3px 5px;border-radius:4px;background:#eef1ff;color:#4658ae;font-size:9px;line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:750}
+.calendar-event.ready{background:#fff1d9;color:#976a10}
+.calendar-event.out{background:#e3f1ff;color:#3d69a3}
+.calendar-event.returned{background:#e7f5ef;color:#237656}
+.calendar-event.late{background:#ffe8e9;color:#ad3642}
+.calendar-more{color:#8d9bb0;font-size:9px}
+.calendar-footer{display:flex;flex-wrap:wrap;gap:10px 18px;padding:12px 16px;color:#8b99ab;font-size:10px}
+.calendar-footer span{display:flex;align-items:center;gap:5px}
+.calendar-key{display:inline-block;border-radius:50%;height:8px;width:8px;background:#7f90e2}
+.calendar-key.ready{background:#e9b14d}
+.calendar-key.out{background:#6aa3dd}
+.calendar-key.late{background:#d76370}
+.calendar-selected>.panel-head h2{font-size:14px}
+.calendar-rentals{padding:0 15px 10px}
+.calendar-rental-entry{width:100%;border:0;background:transparent;border-bottom:1px solid var(--line-2);text-align:left;display:flex;align-items:center;gap:9px;padding:15px 3px;cursor:pointer;min-width:0}
+.calendar-rental-entry:hover{background:var(--primary-pale)}
+.calendar-rental-entry:last-child{border-bottom:0}
+.calendar-rental-description{flex:1;min-width:0}
+.calendar-rental-description strong{font-size:12px;display:block;color:#35435b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calendar-rental-description small{display:block;color:#8897ad;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.calendar-rental-entry>.ico{height:14px;width:14px;color:#8d9ab0}
+.calendar-empty{margin:0;padding:22px 4px;color:#8b9aab;font-size:12px;line-height:1.6}
+.notification-trigger{width:39px;height:39px;flex:none;position:relative;display:grid;place-items:center;background:var(--white);border:1px solid var(--line);border-radius:10px;color:#62749a}
+.notification-trigger .ico{width:19px;height:19px}
+.notification-trigger:hover{background:var(--primary-pale);color:var(--brand-ink)}
+.notification-count{position:absolute;right:-6px;top:-7px;min-width:17px;height:17px;border-radius:12px;background:#b6414e;border:2px solid var(--white);display:grid;place-items:center;font-size:9px;font-weight:850;color:#fff;padding:0 2px}
+.notification-count[hidden]{display:none}
+.notice-list{margin-top:12px}
+.notice-entry{border:0;border-bottom:1px solid var(--line-2);width:100%;padding:13px 0;display:flex;gap:11px;text-align:left;background:transparent;align-items:center}
+.notice-entry:hover{background:var(--primary-pale)}
+.notice-entry:last-child{border-bottom:0}
+.notice-entry .task-icon{width:35px;height:35px}
+.notice-entry .task-icon .ico{height:17px;width:17px}
+.notice-info{flex:1;min-width:0}
+.notice-info strong,.notice-info small{display:block;white-space:normal}
+.notice-info strong{font-size:12px;color:#314158}
+.notice-info small{font-size:10px;color:#8a99ae}
+.notice-entry>.ico{height:15px;width:15px;color:#98a6b9}
+.notifications-settings .panel-head>.ico{color:var(--brand-ink)}
+.notifications-settings .settings-form-body{padding:18px}
+.notification-choice{display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:11px 0}
+.notification-choice+.notification-choice{border-top:1px solid var(--line-2)}
+.notification-choice input{width:18px;height:18px;flex:none;accent-color:var(--primary);margin:1px 0 0}
+.notification-choice strong{display:block;font-size:12px;color:#384964}
+.notification-choice small{display:block;color:#8998aa;font-size:10px;line-height:1.6;margin-top:3px}
+.notification-options{border-top:1px solid var(--line);margin-top:7px;padding-top:6px}
+.notification-options .form-field{margin-top:12px}
+.notification-options .form-field select{margin-top:7px;width:100%}
+.notifications-settings .settings-footer{padding-top:13px;margin-top:13px}
+.notifications-settings .setting-hint{margin-bottom:0}
+html[data-mode="dark"] .rental-view-switch,html[data-mode="dark"] .notification-trigger,html[data-mode="dark"] .calendar-rental-entry,html[data-mode="dark"] .calendar-day{background:#182234;color:#e0eafa;border-color:var(--line)}
+html[data-mode="dark"] .calendar-day.outside{background:#101723;color:#8494ab}
+html[data-mode="dark"] .calendar-day.selected,html[data-mode="dark"] .calendar-day:hover,html[data-mode="dark"] .calendar-rental-entry:hover,html[data-mode="dark"] .notice-entry:hover{background:var(--primary-pale);color:var(--brand-ink)}
+html[data-mode="dark"] .calendar-weekdays{background:#202d42}
+html[data-mode="dark"] .calendar-date{color:inherit}
+html[data-mode="dark"] .calendar-rental-description strong,html[data-mode="dark"] .notice-info strong,html[data-mode="dark"] .notification-choice strong,html[data-mode="dark"] .calendar-header h2{color:#e5eefc}
+html[data-mode="dark"] .calendar-event.reserved{background:#343d67;color:#dae1ff}
+html[data-mode="dark"] .calendar-event.ready{background:#483c23;color:#f6d486}
+html[data-mode="dark"] .calendar-event.out{background:#213d55;color:#c1ddff}
+html[data-mode="dark"] .calendar-event.returned{background:#1b4135;color:#b5f0d1}
+html[data-mode="dark"] .calendar-event.late{background:#542d3b;color:#ffc1c9}
+html[data-mode="dark"] .rental-view-switch button[aria-pressed="true"]{background:var(--primary-pale);color:var(--brand-ink)}
+html[data-mode="dark"] .notification-count{border-color:#182234}
+html[data-accessibility="on"] .calendar-day{min-height:110px}
+html[data-accessibility="on"] .calendar-event,html[data-accessibility="on"] .calendar-date,html[data-accessibility="on"] .calendar-rental-entry strong,html[data-accessibility="on"] .notice-info strong,html[data-accessibility="on"] .notification-choice strong{font-size:13px}
+html[data-accessibility="on"] .rental-view-switch button,html[data-accessibility="on"] .notification-trigger,html[data-accessibility="on"] .calendar-navigation button,html[data-accessibility="on"] .notification-choice{min-height:44px}
+@media(max-width:1180px){.calendar-layout{grid-template-columns:1fr}.calendar-selected{width:100%}}
+@media(max-width:800px){.rentals-toolbar .field-search{flex:1 1 220px;margin-left:0}.rental-view-switch{margin-left:auto}}
+@media(max-width:600px){
+  .rental-view-switch{width:100%;margin-left:0}
+  .rental-view-switch button{flex:1;justify-content:center}
+  .calendar-layout{gap:11px}
+  .calendar-header{padding:13px 11px}
+  .calendar-header h2{font-size:15px}
+  .calendar-header p{font-size:9px}
+  .calendar-navigation{gap:3px}
+  .calendar-navigation .outline-btn{padding:8px;font-size:10px}
+  .calendar-navigation .icon-btn{width:31px;height:32px}
+  .calendar-weekday{font-size:9px;padding:7px 0}
+  .calendar-day{min-height:65px;padding:6px 3px;gap:5px;align-items:center}
+  .calendar-date{font-size:11px;gap:2px}
+  .calendar-events{width:100%;align-items:center;gap:3px}
+  .calendar-event{height:6px;width:6px;border-radius:50%;font-size:0;line-height:0;overflow:hidden;color:transparent;padding:0}
+  .calendar-more{font-size:8px;white-space:nowrap}
+  .calendar-footer{font-size:9px;gap:7px 10px;padding:11px}
+  .notification-trigger{height:37px;width:37px}
+  .notification-choice strong{font-size:12px}
+}
+@media(max-width:380px){.calendar-day{min-height:60px}.calendar-more{font-size:7px}}
