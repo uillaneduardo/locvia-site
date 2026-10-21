@@ -8,6 +8,7 @@
   <meta name="description" content="Experimente o Locvia: acompanhe seus itens, aluguéis, retiradas e devoluções, com dados fictícios.">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/demo/workflow.css">
+  <link rel="help" href="/ajuda/">
   <title>Locvia — Experimentar demonstração</title>
 </head>
 <body>
@@ -30,6 +31,7 @@
     <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h13v11H2zM15 10h4l3 4v3h-7M6 17a2 2 0 1 0 4 0M17 17a2 2 0 1 0 4 0"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.4a2.6 2.6 0 1 1 4.1 2.1c-1.2.8-1.6 1.3-1.6 2.4M12 17h.01"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
     <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
@@ -51,6 +53,7 @@
       </nav>
       <div class="sidebar-foot">
         <div class="demo-notice"><span class="demo-beacon"></span><strong>Você está experimentando</strong><p>Os dados são fictícios. Nada é enviado ou salvo no servidor.</p></div>
+        <a class="sidebar-help-link" href="/ajuda/"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg> Central de Ajuda</a>
         <a class="back-link" href="/">← Voltar ao site</a>
         <div class="foot-credit">Desenvolvido por <a href="https://ulln.com.br" target="_blank" rel="noopener noreferrer">ulln ↗</a></div>
       </div>
@@ -61,6 +64,7 @@
         <div class="top-left"><button class="menu-toggle" id="menu-toggle" aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menu"><svg class="ico"><use href="#i-menu"/></svg></button><div class="breadcrumb"><span>Locvia</span><svg class="ico"><use href="#i-chevron"/></svg><strong id="crumb">Hoje</strong></div></div>
         <div class="top-right">
           <label class="sector-switch"><span>Testar com</span><select id="sector" aria-label="Tipo de negócio na demonstração"><option value="festas">Festas e decoração</option><option value="livros">Livros</option><option value="equipamentos">Equipamentos</option><option value="veiculos">Veículos</option></select><svg class="ico"><use href="#i-down"/></svg></label>
+          <a class="help-trigger" href="/ajuda/" title="Central de Ajuda" aria-label="Abrir Central de Ajuda e perguntas frequentes"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg></a>
           <span class="top-demo"><span class="demo-beacon"></span> Demo</span>
         </div>
       </header>
