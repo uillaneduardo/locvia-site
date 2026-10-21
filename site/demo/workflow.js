@@ -116,7 +116,7 @@
       id,clientId:clients[ci].id,from:offset(from),to:offset(to),status,
       items:lines.map(([pi,qty])=>({id:items[pi].id,qty,price:items[pi].price}))
     }));
-    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1,logo:null,accent:"#455CD4",mode:"light",accessibility:false}};
+    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1,logo:null,accent:"#455CD4",mode:"light",accessibility:false,notifications:{enabled:true,prepare:true,pickup:true,returnDue:true,overdue:true,daysBeforeReturn:1}}};
   }
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
@@ -558,6 +558,86 @@
       : '<div class="logo-placeholder">'+icon("box")+'<span>Sem logotipo</span></div>';
   }
 
+  const noticeKinds={
+    prepare:{label:"Separar itens",icon:"box",className:"amber"},
+    pickup:{label:"Retirada pendente",icon:"truck",className:"indigo"},
+    returnDue:{label:"Devolução próxima",icon:"clock",className:"blue"},
+    overdue:{label:"Devolução atrasada",icon:"alert",className:"red"}
+  };
+  function activeNotices(){
+    const pref=settings().notifications;
+    if(!pref.enabled)return [];
+    const notices=[];
+    for(const r of db().rentals){
+      const who=customer(r.clientId)?.name||"Cliente";
+      const items=r.items.map(x=>product(x.id)?.name||"Item").join(", ");
+      let kind=null,detail="",priority=99;
+      if(r.status==="out" && r.to<today && pref.overdue){
+        kind="overdue";detail="Deveria ter voltado em "+shortDate(r.to);priority=0;
+      }else if(r.status==="reserved" && r.from<=offset(settings().preparationDays) && pref.prepare){
+        kind="prepare";detail="Separar para "+shortDate(r.from);priority=1;
+      }else if(r.status==="ready" && r.from<=offset(1) && pref.pickup){
+        kind="pickup";detail="Retirada prevista para "+shortDate(r.from);priority=2;
+      }else if(r.status==="out" && r.to>=today && r.to<=offset(pref.daysBeforeReturn) && pref.returnDue){
+        kind="returnDue";detail="Receber até "+shortDate(r.to);priority=3;
+      }
+      if(kind)notices.push({kind,detail,priority,r,who,items});
+    }
+    return notices.sort((a,b)=>a.priority-b.priority||a.r.from.localeCompare(b.r.from));
+  }
+  function updateNoticeBadge(){
+    const count=activeNotices().length;
+    const badge=$("notification-count");
+    const trigger=$("notification-trigger");
+    if(badge){badge.textContent=count>9?"9+":String(count);badge.hidden=count===0;}
+    if(trigger)trigger.setAttribute("aria-label","Abrir avisos do negócio: "+count+" "+(count===1?"aviso":"avisos"));
+  }
+  function notificationsDialog(){
+    const records=activeNotices(),pref=settings().notifications;
+    const cards=records.map(n=>{
+      const config=noticeKinds[n.kind];
+      return '<button class="notice-entry" type="button" data-rental="'+safe(n.r.id)+'">'+
+        '<span class="task-icon '+config.className+'">'+icon(config.icon)+'</span>'+
+        '<span class="notice-info"><strong>'+safe(config.label)+' · '+safe(n.who)+'</strong>'+
+        '<small>'+safe(n.items)+'</small><small>'+safe(n.detail)+' · '+safe(n.r.id)+'</small></span>'+
+        icon("chevron")+'</button>';
+    }).join("")||'<div class="placeholder"><strong>Nenhum aviso no momento.</strong>'+
+      (pref.enabled?"Sua rotina está em dia ou as categorias estão desativadas.":"Os avisos estão desativados nas Configurações.")+'</div>';
+    return dialogHeader("AVISOS DA DEMONSTRAÇÃO","O que merece atenção")+
+      '<div class="dialog-body"><div class="warn-inline">'+icon("info")+
+      'São avisos internos calculados a partir dos aluguéis. Não enviamos push, mensagens, e-mail ou SMS.</div>'+
+      '<div class="notice-list">'+cards+'</div></div>'+
+      dialogFoot('<button class="outline-btn" type="button" data-action="close">Fechar</button>'+
+      '<button class="primary-btn" type="button" data-action="notification-settings">'+icon("settings")+' Configurar avisos</button>');
+  }
+  function notificationSettingsMarkup(){
+    const n=settings().notifications;
+    const checkbox=(key,label,desc)=>'<label class="notification-choice"><input type="checkbox" name="'+key+'"'+(n[key]?" checked":"")+
+      '><span><strong>'+label+'</strong><small>'+desc+'</small></span></label>';
+    return '<section class="panel notifications-settings"><div class="panel-head"><div><h2>Notificações</h2><p>Escolha o que merece um aviso dentro do Locvia</p></div>'+icon("bell")+'</div>'+
+      '<form id="notification-settings-form"><div class="settings-form-body">'+
+      checkbox("enabled","Ativar avisos internos","Exibir o contador no sino e as situações que exigem atenção")+
+      '<div class="notification-options">'+
+      checkbox("prepare","Itens para separar","Preparação de aluguéis próximos ou pendentes")+
+      checkbox("pickup","Retiradas","Aluguéis separados com retirada prevista ou pendente")+
+      checkbox("returnDue","Devoluções próximas","Itens com cliente cuja data de devolução está chegando")+
+      checkbox("overdue","Devoluções atrasadas","Itens ainda com cliente depois da data prevista")+
+      '<label class="form-field">Avisar sobre devoluções com antecedência<select name="daysBeforeReturn">'+
+      [0,1,2,3,5,7].map(x=>'<option value="'+x+'"'+(x===n.daysBeforeReturn?" selected":"")+'>'+x+(x===1?" dia":" dias")+'</option>').join("")+'</select></label>'+
+      '</div><div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar notificações</button></div>'+
+      '<p class="setting-hint">Esses avisos são exibidos somente dentro da demonstração. Você não receberá notificações fora dela. As tarefas de Hoje continuam visíveis mesmo que os avisos do sino sejam desativados.</p></div></form></section>';
+  }
+  function saveNotificationSettings(form){
+    const fd=new FormData(form),days=Number(fd.get("daysBeforeReturn"));
+    if(![0,1,2,3,5,7].includes(days)){notify("Escolha uma antecedência válida.");return;}
+    const enabled=fd.has("enabled");
+    const config={enabled,daysBeforeReturn:days};
+    for(const kind of ["prepare","pickup","returnDue","overdue"])config[kind]=fd.has(kind);
+    settings().notifications=config;
+    render();
+    notify(enabled?"Preferências de notificações atualizadas.":"Avisos internos desativados. As tarefas continuam em Hoje.");
+  }
+
   function settingsView(){
     const prefs=settings();
     return heading("Seu jeito de trabalhar","Configurações","Ajustes do negócio e da rotina de aluguéis neste cenário.")+infoBanner()+
@@ -589,8 +669,8 @@
       '<label class="accessibility-control" for="accessibility-toggle"><input id="accessibility-toggle" type="checkbox"'+(prefs.accessibility?" checked":"")+'><span><strong>Modo de acessibilidade</strong><small>Texto maior, contraste reforçado, controles maiores, foco destacado e menos animações.</small></span></label>'+
       '<div class="personalization-note">A aparência e o logotipo são exclusivos desta demonstração. Ao recarregar a página, tudo volta ao padrão.</div></div>'+
       '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferências</button></div></div></form></section>'+
-      '<aside class="settings-sidebar"><section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
-      '<section class="panel"><div class="panel-head"><div><h2>Sobre esta versão</h2><p>O que você pode experimentar</p></div></div><div class="settings-form-body"><div class="setting-line">'+icon("shield")+'<span>Disponibilidade por período e quantidade</span></div><div class="setting-line">'+icon("clock")+'<span>Acompanhamento de retiradas e devoluções</span></div><div class="setting-line">'+icon("users")+'<span>Clientes e histórico de aluguéis</span></div><p class="setting-hint">Autenticação, notificações automáticas, pagamentos e sincronização entre usuários não fazem parte desta demonstração.</p></div></section></aside></div>';
+      '<aside class="settings-sidebar">'+notificationSettingsMarkup()+'<section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Sobre esta versão</h2><p>O que você pode experimentar</p></div></div><div class="settings-form-body"><div class="setting-line">'+icon("shield")+'<span>Disponibilidade por período e quantidade</span></div><div class="setting-line">'+icon("bell")+'<span>Avisos internos sobre tarefas de aluguel</span></div><div class="setting-line">'+icon("users")+'<span>Clientes e histórico de aluguéis</span></div><p class="setting-hint">Autenticação, notificações externas, pagamentos e sincronização entre usuários não fazem parte desta demonstração.</p></div></section></aside></div>';
   }
   function customerFormDialog(id){
     const c=id?customer(id):null;
@@ -706,6 +786,7 @@
     paintPersonalization();
     updateLogoBrand();
     sectorSelect.value=state.segment;
+    updateNoticeBadge();
     document.querySelectorAll(".nav-link").forEach(el=>{
       const active=el.dataset.view===state.view;
       el.classList.toggle("active",active);
@@ -871,7 +952,7 @@
     if(!state.dialog)return;
     const d=state.dialog;
     modal.innerHTML='<section class="dialog'+(d.type==="logo-crop"?" crop-dialog":"")+'" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
+      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="notifications"?notificationsDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
@@ -922,6 +1003,8 @@
     if(!action)return;
     const kind=action.dataset.action;
     if(kind==="new")startNew();
+    if(kind==="open-notifications")openDialog("notifications");
+    if(kind==="notification-settings"){closeDialog();go("configuracoes");}
     if(kind==="rentals-list"){state.rentalsMode="list";render();}
     if(kind==="rentals-calendar"){state.rentalsMode="calendar";render();}
     if(kind==="calendar-prev")moveCalendarMonth(-1);
@@ -969,11 +1052,12 @@
 
   document.addEventListener("submit",event=>{
     const id=event.target.id;
-    if(!["customer-form","item-form","settings-form"].includes(id))return;
+    if(!["customer-form","item-form","settings-form","notification-settings-form"].includes(id))return;
     event.preventDefault();
     if(id==="customer-form")saveCustomer(event.target);
     if(id==="item-form")saveItem(event.target);
     if(id==="settings-form")saveSettings(event.target);
+    if(id==="notification-settings-form")saveNotificationSettings(event.target);
   });
 
   document.addEventListener("input",event=>{
