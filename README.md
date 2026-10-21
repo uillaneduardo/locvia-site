@@ -57,6 +57,19 @@ As áreas **Clientes** e **Meus itens** permitem **criar, consultar, editar e ex
 - A redução da quantidade de um item é bloqueada se ficar abaixo do máximo comprometido por aluguéis ativos em períodos sobrepostos. Itens entregues ainda não devolvidos continuam comprometidos.
 - O valor registrado no aluguel é preservado mesmo que o preço de referência do item seja posteriormente alterado.
 
+### Identidade visual e logotipo demonstrativos
+
+Na área **Configurações → Dados do negócio**, cada cenário oferece personalização visual independente, aplicada ao front-end da demonstração:
+
+- **Logotipo:** carregar arquivo PNG/JPG/WebP (máximo **5 MiB**, mínimo **128 × 128 px**, máximo **4096 × 4096 px**, recomendação 512 × 512 px), ver imagem atual, trocar ou remover. Um editor usa o canvas do navegador para arrastar, aproximar e recortar o arquivo na proporção **1:1**. O resultado é um PNG **320 × 320 px** gerado localmente, armazenado apenas em memória. O arquivo original não é enviado ao servidor.
+- **Onde aparece:** identificação da locadora no menu lateral e prévia de Configurações. O logotipo institucional da Locvia não é substituído.
+- **Cor de destaque:** oito opções predefinidas ou código hexadecimal `#RRGGBB`, com cor do texto do botão ajustada automaticamente segundo a luminância da cor selecionada.
+- **Tema:** claro ou escuro, aplicado à navegação, formulários, painéis e diálogos.
+- **Acessibilidade:** alternância de um modo com controles maiores, foco de teclado reforçado, fonte aumentada em áreas importantes e menos movimento. Não constitui certificação de conformidade com WCAG.
+- **Experiência:** alterações visuais são exibidas imediatamente, sem necessidade de salvar; nome do negócio e preferências de aluguel continuam com botão **Salvar preferências**.
+
+**Importante:** como toda a demo, imagem, cor e preferências visuais são mantidas **somente na memória da aba**; basta atualizar a página para retornar ao padrão. Não faça upload de documentos pessoais ou logotipos confidenciais na demonstração pública. Os limites de arquivos são validações do front-end, não regras de armazenamento ou upload do produto definitivo.
+
 ### Configurações
 
 O menu **Configurações** foi pensado para o empreendedor que administra o negócio sozinho e evita preferências sem utilidade:
@@ -198,6 +211,7 @@ locvia-site/
     └── demo/
         ├── index.html      # app demonstrativo
         ├── workflow.css    # tema neutro com destaque índigo
+        ├── personalization.css # temas, marca e acessibilidade
         └── workflow.js     # estado, telas e disponibilidade
     └── ajuda/
         ├── index.html      # central de ajuda e dúvidas frequentes
