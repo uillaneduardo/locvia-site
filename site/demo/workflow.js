@@ -10,7 +10,7 @@
   const sectorSelect = $("sector");
   const menuToggle = $("menu-toggle");
   const overlay = $("overlay");
-  const titles = { hoje: "Hoje", alugueis: "Aluguéis", itens: "Meus itens", clientes: "Clientes", configuracoes: "Configurações" };
+  const titles = { hoje: "Hoje", alugueis: "Aluguéis", itens: "Meus itens", clientes: "Clientes", financeiro: "Financeiro", configuracoes: "Configurações", conta: "Minha conta" };
   const icons = {
     festas: "🎉", livros: "📚", equipamentos: "🧰", veiculos: "🚗"
   };
@@ -30,7 +30,9 @@
   }
   const safe = (value) => String(value ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const icon = (name) => '<svg class="ico" aria-hidden="true"><use href="#i-'+name+'"></use></svg>';
-  const money = (n) => Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const money = (n) => state?.financeHidden ? "•••••" : Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const currency = n => Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const round2 = n => Math.round((Number(n)+Number.EPSILON)*100)/100;
   const shortDate = (s) => new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"short"}).format(new Date(s+"T12:00:00")).replace(".","");
   const longDate = (s) => new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"long",year:"numeric"}).format(new Date(s+"T12:00:00"));
   const initials = (s) => s.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
@@ -116,14 +118,26 @@
       id,clientId:clients[ci].id,from:offset(from),to:offset(to),status,
       items:lines.map(([pi,qty])=>({id:items[pi].id,qty,price:items[pi].price}))
     }));
-    return {items,clients,rentals,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1,logo:null,accent:"#455CD4",mode:"light",accessibility:false,notifications:{enabled:true,prepare:true,pickup:true,returnDue:true,overdue:true,daysBeforeReturn:1}}};
+    const finance={
+      payments:rentals.filter((r,i)=>i===0||i===2||i===3).map((r,i)=>{
+        const amount=round2(r.items.reduce((sum,line)=>sum+line.price*line.qty,0)*(i===0?.5:i===1?1:.35));
+        return {id:"P-"+(i+1),rentalId:r.id,amount,date:offset(-2+i)};
+      }),
+      expenses:[
+        {id:"D-1",description:"Transporte e entregas",category:"Logística",amount:95,due:offset(-2),paidAt:offset(-2)},
+        {id:"D-2",description:"Manutenção de itens",category:"Manutenção",amount:120,due:offset(1),paidAt:null},
+        {id:"D-3",description:"Materiais de embalagem",category:"Materiais",amount:45,due:offset(4),paidAt:null}
+      ],nextPayment:10,nextExpense:10
+    };
+    return {items,clients,rentals,finance,nextId:1000,nextClientId:1000,nextItemId:1000,settings:{name:fixture.name,preparationDays:1,defaultDays:1,logo:null,accent:"#455CD4",mode:"light",accessibility:false,notifications:{enabled:true,prepare:true,pickup:true,returnDue:true,overdue:true,daysBeforeReturn:1},financeHiddenByDefault:false}};
   }
   const databases = Object.fromEntries(Object.keys(fixtures).map(k=>[k,loadFixture(k)]));
   const state = {
     segment:"festas",view:titles[location.hash.slice(1)]?location.hash.slice(1):"hoje",
     filter:"todos",search:"",itemsMode:"grid",rentalsMode:"list",calendarMonth:today.slice(0,7),calendarDay:today,stockFrom:today,stockTo:offset(2),
-    draft:null,dialog:null
+    financeMonth:today.slice(0,7),financeFilter:"all",financeHidden:false,draft:null,dialog:null
   };
+  const demoAccount={name:"Empreendedor Demo",email:"demo@exemplo.invalid",photo:null};
   const db = () => databases[state.segment];
   const config = () => fixtures[state.segment];
   const settings = () => db().settings;
@@ -779,13 +793,14 @@
   }
 
   function render() {
-    const views={hoje:todayView,alugueis:rentalsView,itens:itemsView,clientes:clientsView,configuracoes:settingsView};
+    const views={hoje:todayView,alugueis:rentalsView,itens:itemsView,clientes:clientsView,financeiro:financeView,configuracoes:settingsView,conta:accountView};
     screen.innerHTML=views[state.view]();
     $("crumb").textContent=titles[state.view];
     $("workspace-name").textContent=settings().name;
     paintPersonalization();
     updateLogoBrand();
     sectorSelect.value=state.segment;
+    updateAccountTop();
     updateNoticeBadge();
     document.querySelectorAll(".nav-link").forEach(el=>{
       const active=el.dataset.view===state.view;
@@ -1043,10 +1058,13 @@
     if(kind==="change")moveRental(action.dataset.id,action.dataset.next);
     if(kind==="cancel"){
       const r=db().rentals.find(x=>x.id===action.dataset.id);
-      if(r && ["reserved","ready"].includes(r.status)){r.status="cancelled";closeDialog();render();notify("Aluguel cancelado nesta demonstração. Disponibilidade liberada.");}
+      if(r && ["reserved","ready"].includes(r.status)){
+        if(paidForRental(r.id)>0){notify("Aluguel com pagamento: cancelamento e estorno exigem conferência. Não disponíveis na demo.");}
+        else {r.status="cancelled";closeDialog();render();notify("Aluguel cancelado nesta demonstração. Disponibilidade liberada.");}
+      }
     }
     if(kind==="reset"){
-      databases[state.segment]=loadFixture(state.segment);closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
+      databases[state.segment]=loadFixture(state.segment);state.financeHidden=settings().financeHiddenByDefault;closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
     }
   });
 
@@ -1102,6 +1120,7 @@
   });
   sectorSelect.addEventListener("change",()=>{
     state.segment=sectorSelect.value;
+    state.financeHidden=settings().financeHiddenByDefault;
     state.stockFrom=today;state.stockTo=offset(2);
     state.filter="todos";state.search="";
     closeDialog();go("hoje");
