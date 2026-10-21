@@ -576,7 +576,7 @@
       '<div class="dialog-body"><div class="item-detail-heading"><span class="item-detail-emoji" aria-hidden="true">'+safe(p.emoji)+'</span><div><strong>'+safe(p.name)+'</strong><small>'+safe(p.category)+'</small></div></div>'+
       '<div class="detail-info item-detail-overview"><div><label>Quantidade total</label><strong>'+p.stock+' unidade(s)</strong></div>'+
       '<div><label>Valor por aluguel</label><strong>'+money(p.price)+'</strong></div>'+
-      '<div><label>Livres de '+safe(shortDate(from))+' a '+safe(shortDate(to))+'</label><strong class="'+(free===0?"none":"")+'">'+free+' de '+p.stock+'</strong></div>'+
+      '<div><label>'+(valid?'Livres de '+safe(shortDate(from))+' a '+safe(shortDate(to)):'Disponibilidade no período')+'</label><strong class="'+(free===0?"none":"")+'">'+(valid?free+' de '+p.stock:'Confira as datas')+'</strong></div>'+
       '<div><label>Comprometidas nesse período</label><strong>'+(valid?p.stock-free:"—")+' unidade(s) no pico</strong></div></div>'+
       '<div class="form-section">Com quem está / reservas no período</div><div class="item-rentals">'+reservations+'</div>'+
       '<div class="form-section">Histórico recente</div><div class="item-history">'+historyMarkup+'</div>'+
