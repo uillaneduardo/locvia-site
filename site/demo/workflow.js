@@ -346,6 +346,11 @@
       badge.classList.toggle("has-logo",Boolean(settings().logo));
       badge.innerHTML=settings().logo?logoImageTag("Logo de "+settings().name):safe(config().initials);
     }
+    const mobile=$("mobile-business-logo");
+    if(mobile){
+      mobile.classList.toggle("has-logo",Boolean(settings().logo));
+      mobile.innerHTML=settings().logo?logoImageTag("Logo de "+settings().name):safe(config().initials);
+    }
     const avatar=$("settings-brand-avatar");
     if(avatar){
       avatar.classList.toggle("has-logo",Boolean(settings().logo));
