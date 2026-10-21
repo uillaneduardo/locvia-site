@@ -8,6 +8,7 @@ Este diretório reúne as **decisões de produto, marca, experiência e implemen
 | --- | --- |
 | [Arquitetura-alvo — API PHP](./arquitetura-api-php.md) | Domínios, endpoints, autenticação, transações, WebSockets e workers assíncronos |
 | [Financeiro, Conta e Contatos](./financeiro-conta-contatos.md) | Modelo de caixa, privacidade, conta, assinatura e canais configuráveis |
+| [Responsividade da demo](./responsividade.md) | Largura automática e validação das sete telas em desktop, tablet e mobile |
 | [Identidade visual](./identidade-visual.md) | Wordmark oficial `locvia.`, cores, tipografia, favicon e regras de aplicação |
 | [Visão do produto](./visao-do-produto.md) | Público-alvo, problema que o Locvia resolve, posicionamento e escopo |
 | [Experiência e regras de aluguel](./experiencia-e-regras.md) | Navegação, ações diárias, disponibilidade, cadastros e estados dos aluguéis |
