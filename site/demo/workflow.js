@@ -287,6 +287,129 @@
       infoBanner()+'<div class="filters"><label class="field-search" style="margin-left:0">'+icon("search")+'<input id="list-search" type="search" value="'+safe(state.search)+'" placeholder="Buscar cliente" aria-label="Buscar clientes"></label></div>'+
       '<section class="panel"><div class="panel-head"><div><h2>Seus clientes</h2><p>'+filtered.length+' contatos de demonstração</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Cliente</th><th>Histórico</th><th>Situação</th><th class="align-end">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
   }
+
+  // Preferências mínimas ligadas ao trabalho solo, independentes para cada cenário da demo.
+  function settingsView(){
+    const prefs=settings();
+    return heading("Seu jeito de trabalhar","Configurações","Ajustes do negócio e da rotina de aluguéis neste cenário.")+infoBanner()+
+      '<div class="settings-layout"><section class="panel settings-panel"><div class="panel-head"><div><h2>Dados do negócio</h2><p>Como a sua empresa aparece no Locvia</p></div>'+icon("settings")+'</div>'+
+      '<form id="settings-form"><div class="settings-form-body"><label class="form-field wide">Nome do negócio<input name="businessName" maxlength="70" required value="'+safe(prefs.name)+'"></label>'+
+      '<div class="settings-preview"><span class="round-initials">'+safe(config().initials)+'</span><div><strong>'+safe(prefs.name)+'</strong><small>Cenário de '+safe(config().display.toLowerCase())+'</small></div></div>'+
+      '<div class="form-section">Organização dos aluguéis</div>'+
+      '<label class="form-field wide">Lembrar de separar com quantos dias de antecedência?<select name="preparationDays">'+[0,1,2,3,5,7].map(n=>'<option value="'+n+'"'+(n===prefs.preparationDays?" selected":"")+'>'+n+(n===1?" dia":" dias")+'</option>').join("")+'</select></label>'+
+      '<p class="setting-hint">Esse prazo define quando um aluguel aparece como pendência no painel Hoje.</p>'+
+      '<label class="form-field wide">Duração sugerida para novos aluguéis<select name="defaultDays">'+[0,1,2,3,5,7,14,30].map(n=>'<option value="'+n+'"'+(n===prefs.defaultDays?" selected":"")+'>'+n+(n===1?" dia":" dias")+'</option>').join("")+'</select></label>'+
+      '<p class="setting-hint">Sugere a data de devolução ao abrir um novo aluguel. Você pode ajustar o período.</p>'+
+      '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferências</button></div></div></form></section>'+
+      '<aside class="settings-sidebar"><section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
+      '<section class="panel"><div class="panel-head"><div><h2>Sobre esta versão</h2><p>O que você pode experimentar</p></div></div><div class="settings-form-body"><div class="setting-line">'+icon("shield")+'<span>Disponibilidade por período e quantidade</span></div><div class="setting-line">'+icon("clock")+'<span>Acompanhamento de retiradas e devoluções</span></div><div class="setting-line">'+icon("users")+'<span>Clientes e histórico de aluguéis</span></div><p class="setting-hint">Autenticação, notificações automáticas, pagamentos e sincronização entre usuários não fazem parte desta demonstração.</p></div></section></aside></div>';
+  }
+  function customerFormDialog(id){
+    const c=id?customer(id):null;
+    if(id&&!c)return dialogHeader("CLIENTE","Não encontrado");
+    return dialogHeader(c?"EDITAR CLIENTE":"NOVO CLIENTE",c?"Editar "+c.name:"Cadastrar cliente")+
+      '<form id="customer-form"><div class="dialog-body"><div class="form-grid">'+
+      '<label class="form-field wide">Nome ou razão social *<input name="name" required maxlength="90" autocomplete="off" value="'+safe(c?.name||"")+'" placeholder="Ex.: Maria Oliveira"></label>'+
+      '<label class="form-field">Telefone (opcional)<input name="phone" type="tel" maxlength="25" value="'+safe(c?.phone||"")+'" placeholder="(81) 99999-9999"></label>'+
+      '<label class="form-field">E-mail (opcional)<input name="email" type="email" maxlength="120" value="'+safe(c?.email||"")+'" placeholder="cliente@exemplo.com"></label>'+
+      '<label class="form-field wide">Observações (opcional)<input name="notes" maxlength="200" value="'+safe(c?.notes||"")+'" placeholder="Ex.: Retira no endereço da loja"></label></div>'+
+      '<p class="info-after">Esses dados servem apenas para testar o cadastro na demo. Não informe dados pessoais reais.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button><button type="submit" class="primary-btn">'+icon("check")+' Salvar cliente</button>')+
+      '</form>';
+  }
+  function itemFormDialog(id){
+    const p=id?product(id):null;
+    if(id&&!p)return dialogHeader("ITEM","Não encontrado");
+    return dialogHeader(p?"EDITAR ITEM":"NOVO ITEM",p?"Editar "+p.name:"Cadastrar item")+
+      '<form id="item-form"><div class="dialog-body"><div class="form-grid">'+
+      '<label class="form-field wide">Nome do item *<input name="name" required maxlength="90" autocomplete="off" value="'+safe(p?.name||"")+'" placeholder="Ex.: Mesa redonda"></label>'+
+      '<label class="form-field">Categoria *<input name="category" required maxlength="45" value="'+safe(p?.category||"")+'" placeholder="Ex.: Decoração"></label>'+
+      '<label class="form-field">Quantidade total *<input name="stock" required type="number" min="0" max="100000" step="1" value="'+(p?.stock??1)+'"></label>'+
+      '<label class="form-field wide">Valor por aluguel (R$) *<input name="price" required type="number" min="0" max="1000000" step="0.01" value="'+(p?.price??0)+'"></label></div>'+
+      '<p class="info-after">O valor é uma referência simples por unidade. A quantidade não pode ser reduzida abaixo do que já está comprometido em aluguéis.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button><button type="submit" class="primary-btn">'+icon("check")+' Salvar item</button>')+
+      '</form>';
+  }
+  function deleteDialog(type,id){
+    const entity=type==="delete-customer"?"customer":"item";
+    const model=entity==="customer"?customer(id):product(id);
+    if(!model)return dialogHeader("EXCLUSÃO","Registro não encontrado");
+    const refs=db().rentals.filter(r=>entity==="customer"?r.clientId===id:r.items.some(l=>l.id===id));
+    const blocked=refs.length>0;
+    return dialogHeader("EXCLUIR "+(entity==="customer"?"CLIENTE":"ITEM"),"Excluir "+model.name+"?")+
+      '<div class="dialog-body"><p class="setting-hint">'+(blocked?
+        'Este registro aparece em '+refs.length+' '+(refs.length===1?"aluguel":"aluguéis")+'. Para preservar o histórico, não pode ser excluído. Você pode editar seus dados.':
+        'A exclusão retira o registro desta demonstração. Essa ação não pode ser desfeita sem restaurar os exemplos.')+'</p>'+
+      (blocked?'<div class="warn-inline red">'+icon("alert")+'Exclusão indisponível: existem aluguéis vinculados, inclusive no histórico.</div>':"")+
+      '</div>'+dialogFoot('<button type="button" class="outline-btn" data-action="close">Fechar</button>'+
+      (blocked?'':'<button type="button" class="primary-btn destructive" data-action="delete-confirm" data-entity="'+entity+'" data-id="'+safe(id)+'">'+icon("trash")+' Confirmar exclusão</button>'));
+  }
+  function performDeletion(entity,id){
+    if(!["customer","item"].includes(entity))return;
+    const isCustomer=entity==="customer";
+    const model=isCustomer?customer(id):product(id);
+    if(!model)return;
+    if(db().rentals.some(r=>isCustomer?r.clientId===id:r.items.some(l=>l.id===id))){
+      notify("Registro em uso. Não é possível excluir.");return;
+    }
+    const list=isCustomer?db().clients:db().items;
+    const at=list.findIndex(p=>p.id===id);if(at===-1)return;
+    list.splice(at,1);closeDialog();render();notify((isCustomer?"Cliente":"Item")+" excluído da demonstração.");
+  }
+  function maxCommittedStock(id){
+    const involved=db().rentals.filter(r=>exists(r)&&r.items.some(l=>l.id===id));
+    if(!involved.length)return 0;
+    const first=involved.reduce((d,r)=>r.from<d?r.from:d,involved[0].from);
+    return peakOccupied(id,first,"9999-12-31");
+  }
+  function saveCustomer(form){
+    const data=new FormData(form),name=String(data.get("name")||"").trim();
+    const phone=String(data.get("phone")||"").trim(),email=String(data.get("email")||"").trim();
+    const notes=String(data.get("notes")||"").trim();
+    const id=state.dialog?.id,c=id?customer(id):null;
+    if((id&&!c)||!name||name.length>90||phone.length>25||email.length>120||notes.length>200){
+      notify("Confira os dados do cliente.");return;
+    }
+    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){notify("Informe um e-mail válido.");return;}
+    if(db().clients.some(x=>x.id!==id&&x.name.toLocaleLowerCase("pt-BR")===name.toLocaleLowerCase("pt-BR"))){
+      notify("Já existe um cliente com esse nome.");return;
+    }
+    if(c){Object.assign(c,{name,phone,email,notes});}
+    else db().clients.push({id:"cli-"+(++db().nextClientId),name,phone,email,notes});
+    closeDialog();render();notify(c?"Cliente atualizado.":"Cliente cadastrado.");
+  }
+  function saveItem(form){
+    const data=new FormData(form),name=String(data.get("name")||"").trim(),category=String(data.get("category")||"").trim();
+    const stockString=String(data.get("stock")||""),priceString=String(data.get("price")||"");
+    const stock=Number(stockString),price=Number(priceString);
+    const id=state.dialog?.id,p=id?product(id):null;
+    if((id&&!p)||!name||name.length>90||!category||category.length>45||!stockString||!Number.isSafeInteger(stock)||stock<0||stock>100000||
+       !priceString||!Number.isFinite(price)||price<0||price>1000000||Math.abs(Math.round(price*100)-price*100)>0.000001){
+      notify("Revise nome, categoria, quantidade e valor.");return;
+    }
+    if(db().items.some(x=>x.id!==id&&x.name.toLocaleLowerCase("pt-BR")===name.toLocaleLowerCase("pt-BR"))){
+      notify("Já existe um item com esse nome.");return;
+    }
+    const min=p?maxCommittedStock(id):0;
+    if(stock<min){notify("Estoque insuficiente: "+min+" unidade(s) já comprometida(s) em aluguéis.");return;}
+    if(p){Object.assign(p,{name,category,stock,price});}
+    else db().items.push({id:"item-"+(++db().nextItemId),name,category,stock,price,emoji:"📦"});
+    closeDialog();render();notify(p?"Item atualizado.":"Item cadastrado.");
+  }
+  function saveSettings(form){
+    const data=new FormData(form),name=String(data.get("businessName")||"").trim();
+    const preparationDays=Number(data.get("preparationDays")),defaultDays=Number(data.get("defaultDays"));
+    if(!name||name.length>70||![0,1,2,3,5,7].includes(preparationDays)||
+       ![0,1,2,3,5,7,14,30].includes(defaultDays)){notify("Confira as preferências.");return;}
+    Object.assign(settings(),{name,preparationDays,defaultDays});
+    render();notify("Preferências atualizadas nesta demonstração.");
+  }
+  function resetConfirmDialog(){
+    return dialogHeader("RESTAURAR CENÁRIO","Restaurar dados de exemplo?")+
+      '<div class="dialog-body"><p class="setting-hint">Todos os clientes, itens, aluguéis e ajustes feitos no cenário '+safe(config().display)+' voltarão ao início. Outros cenários não serão afetados.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button><button type="button" class="primary-btn destructive" data-action="reset">Restaurar cenário</button>');
+  }
+
   function render() {
     const views={hoje:todayView,alugueis:rentalsView,itens:itemsView,clientes:clientsView,configuracoes:settingsView};
     screen.innerHTML=views[state.view]();
@@ -500,6 +623,16 @@
       databases[state.segment]=loadFixture(state.segment);closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
     }
   });
+
+  document.addEventListener("submit",event=>{
+    const id=event.target.id;
+    if(!["customer-form","item-form","settings-form"].includes(id))return;
+    event.preventDefault();
+    if(id==="customer-form")saveCustomer(event.target);
+    if(id==="item-form")saveItem(event.target);
+    if(id==="settings-form")saveSettings(event.target);
+  });
+
   document.addEventListener("input",event=>{
     if(event.target.id==="list-search"){
       const pos=event.target.selectionStart;
