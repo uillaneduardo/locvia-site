@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/demo/workflow.css">
   <link rel="stylesheet" href="/demo/personalization.css">
   <link rel="stylesheet" href="/demo/calendar-notifications.css">
+  <link rel="stylesheet" href="/demo/finance-account.css">
   <link rel="stylesheet" href="/assets/locvia-brand.css">
   <link rel="help" href="/ajuda/">
   <title>Locvia — Experimentar demonstração</title>
@@ -34,6 +35,14 @@
     <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h13v11H2zM15 10h4l3 4v3h-7M6 17a2 2 0 1 0 4 0M17 17a2 2 0 1 0 4 0"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h13v5M3 7v11a2 2 0 0 0 2 2h16V9H6a3 3 0 0 1-3-2Z"/><path d="M16 14h2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M9.8 5.4A11 11 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.4 4.3M6.2 6.2C3.6 8.1 2 12 2 12s4 7 10 7a10 10 0 0 0 4.2-.9"/><path d="M10 10a3 3 0 0 0 4 4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-credit-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="m6 2 4 4-2.5 3a17 17 0 0 0 7.5 7.5L18 14l4 4-2.5 3C10 22 2 14 3 4.5L6 2Z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M20 11.5a8.5 8.5 0 0 1-12 7.7L3 21l1.8-5A8.5 8.5 0 1 1 20 11.5Z"/><path d="M9 10h6m-6 4h4"/></symbol>
     <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
     <symbol id="i-help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.4a2.6 2.6 0 1 1 4.1 2.1c-1.2.8-1.6 1.3-1.6 2.4M12 17h.01"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
@@ -54,12 +63,14 @@
         <button type="button" class="nav-link" data-view="alugueis"><svg class="ico"><use href="#i-calendar"/></svg> Aluguéis</button>
         <button type="button" class="nav-link" data-view="itens"><svg class="ico"><use href="#i-box"/></svg> Meus itens</button>
         <button type="button" class="nav-link" data-view="clientes"><svg class="ico"><use href="#i-users"/></svg> Clientes</button>
+        <button type="button" class="nav-link" data-view="financeiro"><svg class="ico"><use href="#i-wallet"/></svg> Financeiro</button>
         
         <button type="button" class="nav-link" data-view="configuracoes"><svg class="ico"><use href="#i-settings"/></svg> Configurações</button>
+        <button type="button" class="nav-link" data-view="conta"><svg class="ico"><use href="#i-user"/></svg> Minha conta</button>
       </nav>
       <div class="sidebar-foot">
         <div class="demo-notice"><span class="demo-beacon"></span><strong>Você está experimentando</strong><p>Os dados são fictícios. Nada é enviado ou salvo no servidor.</p></div>
-        <a class="sidebar-help-link" href="/ajuda/"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg> Central de Ajuda</a>
+        <a class="sidebar-help-link" href="/ajuda/" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg> Central de Ajuda</a>
         <a class="back-link" href="/">← Voltar ao site</a>
         <div class="foot-credit">Desenvolvido por <a href="https://ulln.com.br" target="_blank" rel="noopener noreferrer">ulln ↗</a></div>
       </div>
@@ -71,15 +82,28 @@
         <div class="top-right">
           <label class="sector-switch"><span>Testar com</span><select id="sector" aria-label="Tipo de negócio na demonstração"><option value="festas">Festas e decoração</option><option value="livros">Livros</option><option value="equipamentos">Equipamentos</option><option value="veiculos">Veículos</option></select><svg class="ico"><use href="#i-down"/></svg></label>
           <button class="notification-trigger" type="button" data-action="open-notifications" id="notification-trigger" aria-label="Abrir avisos do negócio" title="Avisos do negócio"><svg class="ico" aria-hidden="true"><use href="#i-bell"/></svg><span class="notification-count" id="notification-count" hidden>0</span></button>
-          <a class="help-trigger" href="/ajuda/" title="Central de Ajuda" aria-label="Abrir Central de Ajuda e perguntas frequentes"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg></a>
+          <a class="help-trigger" href="/ajuda/" target="_blank" rel="noopener noreferrer" title="Central de Ajuda" aria-label="Abrir Central de Ajuda e perguntas frequentes"><svg class="ico" aria-hidden="true"><use href="#i-help-circle"/></svg></a>
+          <button type="button" class="account-top-trigger" data-view="conta" title="Minha conta" aria-label="Minha conta"><span id="account-avatar-top">EA</span></button>
           <span class="top-demo"><span class="demo-beacon"></span> Demo</span>
         </div>
       </header>
       <main class="content" id="screen" tabindex="-1"></main>
     </div>
   </div>
+  <div class="contact-widget" id="contact-widget">
+    <section id="contact-panel" class="contact-panel" aria-label="Opções de contato" hidden>
+      <div class="contact-panel-head"><div><strong>Como podemos ajudar?</strong><small>Escolha um canal de contato</small></div><button class="icon-btn" type="button" id="contact-close" aria-label="Fechar contatos"><svg class="ico"><use href="#i-close"/></svg></button></div>
+      <div id="contact-channels" class="contact-channels"></div>
+      <p class="contact-disclaimer">Alguns canais serão liberados quando o atendimento for configurado.</p>
+    </section>
+    <button class="contact-fab" id="contact-fab" type="button" aria-controls="contact-panel" aria-expanded="false" aria-label="Abrir contatos rápidos" title="Contato rápido">
+      <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M16 .8C7.6.8.8 7.5.8 15.9c0 2.7.7 5.3 2 7.6L.4 31.3l8-2.1c2.3 1.2 4.9 1.9 7.6 1.9 8.4 0 15.2-6.8 15.2-15.2S24.4.8 16 .8zm0 27.5a12.3 12.3 0 0 1-6.3-1.7l-.5-.3-4.7 1.2 1.2-4.6-.3-.5a12.3 12.3 0 1 1 10.6 5.9zm6.8-9.3c-.4-.2-2.2-1.1-2.6-1.2-.3-.1-.6-.2-.8.2-.2.3-1 1.2-1.2 1.4-.2.2-.4.3-.7.1-2.6-1.3-4.2-2.8-5.1-5.4-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.7.1-.2 0-.5-.1-.7l-1.2-2.9c-.3-.7-.6-.6-.8-.6h-.7c-.3 0-.7.1-1 .5s-1.3 1.3-1.3 3.2 1.3 3.8 1.3 3.8 1.5 4 4.1 6.3 6.5 2.2 2.4 2.7 2.9 2.5.2-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.7-.5z"/></svg>
+    </button>
+  </div>
   <div id="modal" class="modal-layer" hidden></div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/assets/contact-config.js" defer></script>
+  <script src="/demo/contact-widget.js" defer></script>
   <script src="/demo/workflow.js" defer></script>
 </body>
 </html>
