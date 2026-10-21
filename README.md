@@ -4,6 +4,7 @@ Site de apresentação da **Locvia**, ferramenta para organizar aluguéis de ite
 
 - Landing page: `/`
 - Demonstração: `/demo/`
+- Central de Ajuda / FAQ: `/ajuda/`
 - Health check: `/healthz`
 - Implementação: HTML, CSS e JavaScript puro; Nginx; Docker Compose
 - Não exige banco de dados, Node.js, API, credenciais ou etapa de compilação.
@@ -69,6 +70,20 @@ As preferências e cadastros são independentes entre os cenários (festas, livr
 
 **Limitações:** este comportamento é uma simulação front-end. O navegador não compartilha informações com outros usuários ou abas e não oferece proteção transacional real, autenticação, banco de dados nem sincronização. Em produção, a disponibilidade deve ser revalidada no servidor sob controle de concorrência para evitar dois usuários reservarem a última unidade simultaneamente. Também serão necessárias regras para devoluções parciais, manutenção, avarias e períodos de preparação entre aluguéis.
 
+## Central de Ajuda — /ajuda/
+
+A FAQ é publicada **no mesmo container**, sem API, banco de dados nem configuração de DNS adicional. Fica acessível em:
+
+- **Principal:** `https://locvia.com.br/ajuda/`
+- **Na demo:** ícone `?` visível no topo e link **Central de Ajuda** no menu lateral
+- **Nos cartões de Meus itens:** texto **Detalhes ›** indica que tocar no item abre um painel. No modo lista, também aparece **Detalhes ›**, preservando a seta em telas pequenas.
+
+Conteúdo da ajuda: primeiros passos, como cadastrar e editar itens e clientes, disponibilidades sobrepostas, acompanhamento de aluguéis, entrega/devolução, atrasos, configurações e limitações da demo. Inclui busca instantânea, categorias navegáveis, perguntas expansíveis, links diretos às telas da demo e contato por e-mail.
+
+**Opcional — subdomínio `ajuda.locvia.com.br`:** o Nginx também reconhece `ajuda.locvia.com.br` e `faq.locvia.com.br` e os redireciona para `https://locvia.com.br/ajuda/`. Para ativar, no **Cloudflare Zero Trust → Tunnels → seu túnel existente → Published applications/Public Hostnames**, adicione `ajuda.locvia.com.br` apontando para **o mesmo serviço** do Locvia (`http://locvia-site:80` se estiverem na mesma rede Docker, ou o endereço privado que seu Tunnel já utiliza). O Cloudflare cria ou solicita o DNS desse hostname. Essa etapa é opcional; o endereço `/ajuda/` já funciona depois do deploy.
+
+O Nginx usa `Cache-Control: no-store` tanto em `/demo/` como em `/ajuda/` para evitar arquivos JS/CSS desatualizados durante os ciclos de teste. A landing page não é alterada pela inclusão da ajuda.
+
 ## Requisitos
 
 - Docker Engine e plugin Docker Compose
@@ -89,6 +104,7 @@ Acesse na rede local do host:
 
 - http://127.0.0.1:8086/
 - http://127.0.0.1:8086/demo/
+- http://127.0.0.1:8086/ajuda/
 
 Se precisar de outra porta, crie um arquivo `.env` na raiz:
 
@@ -183,6 +199,10 @@ locvia-site/
         ├── index.html      # app demonstrativo
         ├── workflow.css    # tema neutro com destaque índigo
         └── workflow.js     # estado, telas e disponibilidade
+    └── ajuda/
+        ├── index.html      # central de ajuda e dúvidas frequentes
+        ├── help.css        # estilos responsivos
+        └── help.js         # busca local e atalho /
 ```
 
 ## Direção de marca e conteúdo
