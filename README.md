@@ -245,3 +245,12 @@ Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
 - É possível restringir a demo pelo Cloudflare Access no futuro, se necessário.
 
 © Locvia. Desenvolvido por [ulln](https://ulln.com.br).
+
+
+## Calendário e avisos na demonstração
+
+Em **Aluguéis**, alterne entre **Lista** e **Calendário** para acompanhar os compromissos por mês e por dia. Busca e filtros operam nos dois modos. O calendário compacto no celular usa marcadores de status.
+
+O sino no cabeçalho apresenta **avisos internos** para separação, retirada, devolução próxima e devolução atrasada. As categorias e a antecedência de devoluções podem ser configuradas em **Configurações → Notificações**. Desativar o sino não remove tarefas de **Hoje**.
+
+São recursos **somente demonstrativos**, sem push, WhatsApp, e-mail, SMS, sincronização ou notificações em segundo plano. Tudo retorna ao exemplo após atualizar a página. Consulte [Experiência e regras](./docs/experiencia-e-regras.md).
