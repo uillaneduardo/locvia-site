@@ -89,3 +89,21 @@ No SaaS operacional: construir **API + banco de dados + autenticação + isolame
 - O sino do cabeçalho apresenta alertas para separação, retirada, devoluções próximas e devoluções atrasadas. Configurações permite gerir categorias e antecedência das devoluções.
 - **Não existe Web Push, e-mail, SMS, WhatsApp, execução em segundo plano, sincronização com servidor, entrega agendada ou permissão de notificação do navegador**. São indicadores internos da interface, calculados somente enquanto a demo estiver aberta.
 - Desligar o sino **não desativa** a lista de tarefas de Hoje. Nada persiste após recarregar a página.
+
+
+## Novas telas e módulos
+
+- **Financeiro**, em `#financeiro`: visão mensal, recebimentos de aluguéis, despesas, saldos, pendências e proteção visual dos valores. Não existe integração bancária.
+- **Minha conta**, em `#conta`: nome, foto e e-mail demonstrativos; senha e assinatura são apresentados sem coletar credenciais ou dados de cartão.
+- **Configurações → Privacidade financeira**: padrão de valores ocultos por cenário.
+- **Contato flutuante**: `site/demo/contact-widget.js` e `site/assets/contact-config.js`, com e-mail definido e WhatsApp/Telegram/telefone desativados até configurar destinos.
+- **CSS**: `site/demo/finance-account.css`, complementando os estilos da demo.
+- **Ajuda**: os acessos no cabeçalho e menu da demo abrem `/ajuda/` em nova aba.
+
+As funções financeiras são **somente de demonstração**: movimentações e pagamentos parciais são mutações em memória, não contabilidade, PIX, cartão ou cobrança real. A foto de perfil também é processada apenas localmente. Não usar dados pessoais reais, senhas ou números de cartão no protótipo.
+
+## Arquitetura-alvo aprovada
+
+**PHP no backend**, API REST/JSON HTTPS autenticada e versionada, validação/autorização/isolamento tenant no servidor. **HTML/CSS/JavaScript puros no frontend** consumindo endpoints. WebSockets e workers PHP assíncronos **quando necessários**, sem depender de conexão persistente para gravar aluguéis ou pagamentos.
+
+Ver [Arquitetura da API PHP](./arquitetura-api-php.md) e [Financeiro, Minha conta e Contatos](./financeiro-conta-contatos.md).
