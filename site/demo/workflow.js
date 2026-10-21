@@ -891,7 +891,7 @@
       '<label class="accessibility-control" for="accessibility-toggle"><input id="accessibility-toggle" type="checkbox"'+(prefs.accessibility?" checked":"")+'><span><strong>Modo de acessibilidade</strong><small>Texto maior, contraste reforçado, controles maiores, foco destacado e menos animações.</small></span></label>'+
       '<div class="personalization-note">A aparência e o logotipo são exclusivos desta demonstração. Ao recarregar a página, tudo volta ao padrão.</div></div>'+
       '<div class="settings-footer"><button class="primary-btn" type="submit">'+icon("check")+' Salvar preferências</button></div></div></form></section>'+
-      '<aside class="settings-sidebar">'+notificationSettingsMarkup()+'<section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
+      '<aside class="settings-sidebar">'+financePrivacySettings()+notificationSettingsMarkup()+'<section class="panel"><div class="panel-head"><div><h2>Dados da demonstração</h2><p>Faça novos testes quando quiser</p></div></div><div class="settings-form-body"><p class="setting-hint">As alterações em clientes, itens, aluguéis e preferências permanecem somente enquanto esta página estiver aberta. Recarregar restaura os exemplos.</p><button type="button" class="outline-btn danger-text" data-action="reset-confirm">'+icon("refresh")+' Restaurar exemplos</button></div></section>'+
       '<section class="panel"><div class="panel-head"><div><h2>Sobre esta versão</h2><p>O que você pode experimentar</p></div></div><div class="settings-form-body"><div class="setting-line">'+icon("shield")+'<span>Disponibilidade por período e quantidade</span></div><div class="setting-line">'+icon("bell")+'<span>Avisos internos sobre tarefas de aluguel</span></div><div class="setting-line">'+icon("users")+'<span>Clientes e histórico de aluguéis</span></div><p class="setting-hint">Autenticação, notificações externas, pagamentos e sincronização entre usuários não fazem parte desta demonstração.</p></div></section></aside></div>';
   }
   function customerFormDialog(id){
@@ -1131,6 +1131,8 @@
       '<div><label>Retirada</label><strong>'+longDate(r.from)+'</strong></div><div><label>Devolução prevista</label><strong>'+longDate(r.to)+'</strong></div></div>'+
       '<div class="form-section">Itens deste aluguel</div><table class="rent-items"><tbody>'+lines+'</tbody></table><div class="detail-total"><span>Total de referência</span><strong>'+money(total(r))+'</strong></div>'+
       (isLate(r)?'<div class="warn-inline red">'+icon("alert")+'A devolução passou da data prevista. O item continua indisponível até você registrar o retorno.</div>':"")+
+      '<div class="rental-finance-summary"><span>Recebido: <strong>'+money(paidForRental(r.id))+'</strong></span><span>A receber: <strong>'+money(dueForRental(r))+'</strong></span>'+
+      (dueForRental(r)>0&&r.status!=="cancelled"?'<button type="button" class="mini-btn" data-action="finance-receive" data-id="'+safe(r.id)+'">Registrar recebimento</button>':"")+'</div>'+
       '<p class="info-after">Use a ação abaixo para atualizar a situação deste aluguel. Na demonstração, a mudança vale somente nesta aba.</p></div>'+
       dialogFoot(cancel+'<button class="outline-btn" type="button" data-action="close">Fechar</button>'+actionHtml);
   }
@@ -1175,7 +1177,7 @@
     if(!state.dialog)return;
     const d=state.dialog;
     modal.innerHTML='<section class="dialog'+(d.type==="logo-crop"?" crop-dialog":"")+'" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="notifications"?notificationsDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
+      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="notifications"?notificationsDialog():d.type==="expense"?expenseDialog():d.type==="receive"?receiveDialog(d.id):d.type==="account-email"?accountEmailDialog():d.type==="account-password"?passwordDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
@@ -1226,6 +1228,17 @@
     if(!action)return;
     const kind=action.dataset.action;
     if(kind==="new")startNew();
+    if(kind==="finance-toggle"){state.financeHidden=!state.financeHidden;render();}
+    if(kind==="finance-prev")financialMonthShift(-1);
+    if(kind==="finance-next")financialMonthShift(1);
+    if(kind==="finance-now"){state.financeMonth=today.slice(0,7);render();}
+    if(kind==="finance-filter"&&["all","income","expense","pending"].includes(action.dataset.filter)){state.financeFilter=action.dataset.filter;render();}
+    if(kind==="finance-add-expense")openDialog("expense");
+    if(kind==="finance-receive")openDialog("receive",action.dataset.id);
+    if(kind==="finance-pay")markExpensePaid(action.dataset.id);
+    if(kind==="account-change-email")openDialog("account-email");
+    if(kind==="account-password")openDialog("account-password");
+    if(kind==="account-remove-photo"){demoAccount.photo=null;render();notify("Foto de perfil removida da demonstração.");}
     if(kind==="open-notifications")openDialog("notifications");
     if(kind==="notification-settings"){closeDialog();go("configuracoes");}
     if(kind==="rentals-list"){state.rentalsMode="list";render();}
@@ -1278,12 +1291,17 @@
 
   document.addEventListener("submit",event=>{
     const id=event.target.id;
-    if(!["customer-form","item-form","settings-form","notification-settings-form"].includes(id))return;
+    if(!["customer-form","item-form","settings-form","notification-settings-form","finance-privacy-form","expense-form","receive-form","account-profile-form","account-email-form"].includes(id))return;
     event.preventDefault();
     if(id==="customer-form")saveCustomer(event.target);
     if(id==="item-form")saveItem(event.target);
     if(id==="settings-form")saveSettings(event.target);
     if(id==="notification-settings-form")saveNotificationSettings(event.target);
+    if(id==="finance-privacy-form")saveFinancePrivacy(event.target);
+    if(id==="expense-form")saveExpense(event.target);
+    if(id==="receive-form")saveReceive(event.target);
+    if(id==="account-profile-form")saveAccountProfile(event.target);
+    if(id==="account-email-form")saveAccountEmail(event.target);
   });
 
   document.addEventListener("input",event=>{
@@ -1309,6 +1327,10 @@
     }
   });
   document.addEventListener("change",event=>{
+    if(event.target.id==="account-photo-file"){
+      const file=event.target.files?.[0];event.target.value="";
+      if(file)readAccountPhoto(file);return;
+    }
     if(event.target.id==="logo-file"){
       const file=event.target.files?.[0];event.target.value="";
       if(file)readLogoFile(file);return;
