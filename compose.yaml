@@ -1,0 +1,16 @@
+services:
+  locvia-site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: locvia-site:local
+    container_name: locvia-site
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${LOCVIA_PORT:-8086}:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
