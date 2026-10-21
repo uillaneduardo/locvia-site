@@ -6,6 +6,7 @@ Site de apresentação da **Locvia**, ferramenta para organizar aluguéis de ite
 - Demonstração: `/demo/`
 - Central de Ajuda / FAQ: `/ajuda/`
 - Health check: `/healthz`
+- Decisões de produto, marca e implementação: [`docs/`](./docs/README.md)
 - Implementação: HTML, CSS e JavaScript puro; Nginx; Docker Compose
 - Não exige banco de dados, Node.js, API, credenciais ou etapa de compilação.
 
@@ -203,11 +204,19 @@ locvia-site/
 ├── .dockerignore
 ├── .gitignore
 ├── README.md
+├── docs/                  # decisões de produto, identidade e checklist
+│   ├── README.md
+│   ├── identidade-visual.md
+│   ├── visao-do-produto.md
+│   ├── experiencia-e-regras.md
+│   ├── demonstracao-e-implementacao.md
+│   └── checklist-de-homologacao.md
 └── site/
     ├── index.html          # landing page
     ├── styles.css
     ├── assets/
-    │   └── favicon.svg
+    │   ├── favicon.svg
+    │   └── locvia-brand.css # wordmark institucional compartilhado
     └── demo/
         ├── index.html      # app demonstrativo
         ├── workflow.css    # tema neutro com destaque índigo
@@ -221,9 +230,11 @@ locvia-site/
 
 ## Direção de marca e conteúdo
 
-Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza cinco áreas: **Hoje**, **Aluguéis**, **Meus itens**, **Clientes** e **Configurações**. O destaque da demo é um azul índigo aplicado às ações e aos componentes, mantendo a linguagem visual neutra do shadcn/ui. **Não é o produto operacional**.
+Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza cinco áreas: **Hoje**, **Aluguéis**, **Meus itens**, **Clientes** e **Configurações**. A marca institucional **`locvia.`** usa **wordmark em negrito e ponto índigo fixo `#455CD4`**, aplicado no site, na demo e na Central de Ajuda. Os destaques da **interface** começam em índigo, mas o empreendedor pode alterar a cor da UI sem modificar a marca. O estilo é responsivo e neutro, inspirado em princípios de componentes do shadcn/ui. **Não é o produto operacional**.
 
 Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
+
+**Padrão de marca:** [Identidade Visual Locvia](./docs/identidade-visual.md). **Produto e regras:** [Visão do Produto](./docs/visao-do-produto.md) e [Experiência e Regras](./docs/experiencia-e-regras.md). **Validação:** [Checklist de Homologação](./docs/checklist-de-homologacao.md).
 
 ## Segurança e operação
 
