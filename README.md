@@ -1,6 +1,6 @@
 # Locvia — site institucional e demonstração
 
-Site de apresentação da **Locvia**, plataforma de gestão de locações para eventos, com uma demonstração interativa **estática**.
+Site de apresentação da **Locvia**, ferramenta para organizar aluguéis de itens, começando por festas e eventos, com uma demonstração interativa **estática**.
 
 - Landing page: `/`
 - Demonstração: `/demo/`
@@ -8,7 +8,34 @@ Site de apresentação da **Locvia**, plataforma de gestão de locações para e
 - Implementação: HTML, CSS e JavaScript puro; Nginx; Docker Compose
 - Não exige banco de dados, Node.js, API, credenciais ou etapa de compilação.
 
-> **Importante:** a demonstração utiliza dados fictícios que existem apenas na sessão do navegador. Ela não cadastra clientes reais, não envia orçamentos, não processa pagamentos e não se conecta ao SaaS de produção. A landing page apresenta a proposta do produto; funcionalidades do SaaS devem ser validadas antes de sua comercialização.
+> **Importante:** a demonstração utiliza dados fictícios que existem apenas na memória da aba atual (recarregar reinicia os exemplos). Ela não cadastra clientes reais, não envia orçamentos, não processa pagamentos e não se conecta ao SaaS de produção. A landing page apresenta a proposta do produto; funcionalidades do SaaS devem ser validadas antes de sua comercialização.
+
+## Demonstração — fluxo centrado no aluguel
+
+A página pública em `/demo/` apresenta a operação de um pequeno negócio que aluga itens. Começa com **Festas e decoração**, mas permite trocar o tipo de empresa pelo seletor **Testar com**:
+
+- **Festas e decoração:** painéis, cadeiras, mesas e acessórios
+- **Livros:** exemplares e coleções
+- **Equipamentos:** ferramentas e equipamentos audiovisuais
+- **Veículos:** bicicletas, motos e utilitários
+
+Cada opção tem dados fictícios independentes na aba do navegador.
+
+### Jornada demonstrável
+
+1. Na tela **Hoje**, confira as ações em **Para não esquecer**: separar itens, registrar retirada e registrar devolução (inclusive atrasada).
+2. Clique em **Novo aluguel**; escolha cliente, retirada e devolução previstas.
+3. Escolha um item e quantidade. A interface mostra quantas unidades existem **para todo o intervalo**.
+4. Quando não há unidades, a tela explica quem está com os itens e impede a inclusão na quantidade indisponível.
+5. Confirme o aluguel. Ele passa a ficar **Reservado**.
+6. Abra o registro e use **Marcar separado → Registrar retirada → Registrar devolução**.
+7. Ao registrar a devolução, a disponibilidade das unidades é liberada. Consulte em **Meus itens** pelo intervalo escolhido.
+
+**Caso de teste:** no negócio Festas, o **Painel redondo areia** tem uma unidade ainda com Mariana Costa, com devolução atrasada. Tente alugá-lo para amanhã: o sistema não deixa. Na página Hoje, registre a devolução do aluguel **A-101**; tente novamente para ver a unidade liberada.
+
+A checagem considera **datas inclusivas e quantidade máxima ocupada por dia**, respeitando reservas, itens separados e itens em mãos de clientes. Um aluguel com devolução vencida continua bloqueando a unidade até o registro do retorno. Quantidades de locações futuras só bloqueiam datas sobrepostas; registros devolvidos ou cancelados liberam o período.
+
+**Limitações:** este comportamento é uma simulação front-end. O navegador não compartilha informações com outros usuários ou abas e não oferece proteção transacional real, autenticação, banco de dados nem sincronização. Em produção, a disponibilidade deve ser revalidada no servidor sob controle de concorrência para evitar dois usuários reservarem a última unidade simultaneamente. Também serão necessárias regras para devoluções parciais, manutenção, avarias e períodos de preparação entre aluguéis.
 
 ## Requisitos
 
@@ -120,13 +147,13 @@ locvia-site/
     │   └── favicon.svg
     └── demo/
         ├── index.html      # app demonstrativo
-        ├── demo.css
-        └── demo.js
+        ├── workflow.css    # tema neutro com destaque índigo
+        └── workflow.js     # estado, telas e disponibilidade
 ```
 
 ## Direção de marca e conteúdo
 
-Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demo ilustra acervo, locações, clientes e financeiro; **não é o produto operacional**.
+Identidade visual neutra e responsiva, inspirada nos princípios do shadcn/ui: contraste bem definido, superfícies limpas, bordas discretas e componentes consistentes. Copy direta, em português do Brasil, para locadoras de itens para festas e eventos. A demonstração prioriza quatro áreas: **Hoje**, **Aluguéis**, **Meus itens** e **Clientes**. O destaque da demo é um azul índigo aplicado às ações e aos componentes, mantendo a linguagem visual neutra do shadcn/ui. **Não é o produto operacional**.
 
 Rodapé institucional: [Desenvolvido por ulln](https://ulln.com.br).
 
