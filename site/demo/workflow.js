@@ -308,6 +308,171 @@
   }
 
   // Preferências mínimas ligadas ao trabalho solo, independentes para cada cenário da demo.
+
+  // Identidade da locadora: não altera o logo do produto Locvia.
+  const ACCENT_COLORS=["#455CD4","#0F766E","#1D4ED8","#7C3AED","#B45309","#BE185D","#0E7490","#334155"];
+  const LOGO_MAX_BYTES=5*1024*1024,LOGO_MIN_DIM=128,LOGO_MAX_DIM=4096,LOGO_OUTPUT=320;
+  let cropState=null;
+  const validAccent = value => /^#[0-9a-f]{6}$/i.test(String(value||"").trim())
+    ? String(value).trim().toUpperCase() : null;
+  function blendColors(a,b,part){
+    const h=v=>v.replace("#","");
+    const x=h(a),y=h(b);
+    return "#"+[0,2,4].map(i=>Math.round(parseInt(x.slice(i,i+2),16)*(1-part)+parseInt(y.slice(i,i+2),16)*part).toString(16).padStart(2,"0")).join("").toUpperCase();
+  }
+  function luminance(hex){
+    const vals=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4));
+    return .2126*vals[0]+.7152*vals[1]+.0722*vals[2];
+  }
+  function logoImageTag(alt){
+    return '<img class="branding-logo" src="'+safe(settings().logo)+'" alt="'+safe(alt)+'">';
+  }
+  function updateLogoBrand(){
+    const badge=$("workspace-symbol");
+    if(badge){
+      badge.classList.toggle("has-logo",Boolean(settings().logo));
+      badge.innerHTML=settings().logo?logoImageTag("Logo de "+settings().name):safe(config().initials);
+    }
+    const avatar=$("settings-brand-avatar");
+    if(avatar){
+      avatar.classList.toggle("has-logo",Boolean(settings().logo));
+      avatar.innerHTML=settings().logo?logoImageTag("Logo de "+settings().name):safe(config().initials);
+    }
+    const thumb=$("settings-logo-preview");if(thumb)thumb.innerHTML=logoPreviewMarkup();
+    const view=$("logo-view");if(view)view.hidden=!settings().logo;
+    const remove=$("logo-remove");if(remove)remove.hidden=!settings().logo;
+    const label=$("logo-upload-label");if(label)label.innerHTML=icon("pencil")+(settings().logo?" Trocar imagem":" Carregar imagem");
+  }
+  function paintPersonalization(){
+    const p=settings(),dark=p.mode==="dark";
+    const accent=validAccent(p.accent)||"#455CD4";
+    const root=document.documentElement;
+    root.dataset.mode=dark?"dark":"light";
+    root.dataset.accessibility=p.accessibility?"on":"off";
+    const backdrop=dark?"#182234":"#FFFFFF";
+    const vars={
+      "--primary":accent,
+      "--primary-hover":blendColors(accent,dark?"#FFFFFF":"#000000",dark?.18:.13),
+      "--primary-pale":blendColors(accent,backdrop,dark?.83:.92),
+      "--primary-line":blendColors(accent,backdrop,dark?.64:.75),
+      "--brand-ink":dark?blendColors(accent,"#FFFFFF",.48):
+        (luminance(accent)>.21?blendColors(accent,"#000000",.3):accent),
+      "--on-primary":luminance(accent)>.185?"#101723":"#FFFFFF",
+      "--focus-ring":dark?"#FFCC74":"#596FDB"
+    };
+    Object.entries(vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  }
+  function updateAppearanceControls(){
+    document.querySelectorAll("[data-action='accent-preset']").forEach(btn=>{
+      const selected=btn.dataset.color===settings().accent;
+      btn.setAttribute("aria-pressed",String(selected));
+      const swatch=btn.querySelector(".color-dot");
+      if(swatch)swatch.innerHTML=selected?icon("check"):"";
+    });
+    document.querySelectorAll("[data-action='set-theme']").forEach(btn=>{
+      btn.setAttribute("aria-pressed",String(btn.dataset.mode===settings().mode));
+    });
+    const input=$("custom-accent");if(input)input.value=settings().accent;
+    const feedback=$("color-feedback");
+    if(feedback){feedback.textContent="Cor atual: "+settings().accent;feedback.setAttribute("role","status");}
+    const a11y=$("accessibility-toggle");if(a11y)a11y.checked=settings().accessibility;
+  }
+  function chooseAccent(value){
+    const color=validAccent(value);
+    if(!color){
+      const info=$("color-feedback");
+      if(info){info.setAttribute("role","alert");info.textContent="Digite uma cor válida com # e seis caracteres, por exemplo #0F766E.";}
+      notify("Informe uma cor hexadecimal válida, como #0F766E.");return;
+    }
+    settings().accent=color;
+    paintPersonalization();
+    updateAppearanceControls();
+    notify("Cor de destaque atualizada na demonstração.");
+  }
+  function logoViewDialog(){
+    if(!settings().logo)return dialogHeader("LOGOTIPO","Nenhuma imagem cadastrada");
+    return dialogHeader("MEU NEGÓCIO","Logotipo atual")+
+      '<div class="dialog-body"><div class="logo-current-preview">'+logoImageTag("Logotipo atual de "+settings().name)+'</div>'+
+      '<p class="crop-note">Imagem já recortada no formato quadrado 1:1. Apenas o negócio selecionado usa este logotipo.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Fechar</button>');
+  }
+  function cropDialog(){
+    if(!cropState)return dialogHeader("LOGOTIPO","Nenhuma imagem carregada");
+    return dialogHeader("LOGOTIPO DO NEGÓCIO","Recortar imagem para 1:1")+
+      '<div class="dialog-body"><div class="crop-container"><div class="crop-canvas-shell">'+
+      '<canvas id="logo-crop-canvas" width="320" height="320" aria-label="Prévia quadrada do logotipo. Arraste para ajustar a posição" role="img"></canvas>'+
+      '<span class="crop-guides" aria-hidden="true"></span></div><div class="crop-settings">'+
+      '<label for="logo-crop-zoom">Ajustar zoom</label><input type="range" id="logo-crop-zoom" min="1" max="3" step="0.05" value="'+cropState.zoom+'">'+
+      '<p class="crop-note">Arraste a imagem dentro do quadrado para escolher a área que será usada. Use o controle de zoom para aproximar ou afastar.</p>'+
+      '<p class="crop-file-meta">'+safe(cropState.fileName)+' · '+cropState.width+' × '+cropState.height+' pixels</p>'+
+      '<button type="button" class="outline-btn" data-action="crop-center">Centralizar imagem</button></div></div>'+
+      '<p class="crop-note">O resultado será uma imagem PNG quadrada de 320 × 320 pixels, usada somente nesta demonstração.</p></div>'+
+      dialogFoot('<button type="button" class="outline-btn" data-action="close">Cancelar</button>'+
+        '<button type="button" class="primary-btn" data-action="crop-save">'+icon("check")+' Usar este recorte</button>');
+  }
+  function clampLogoPan(){
+    if(!cropState)return;
+    const scale=Math.max(LOGO_OUTPUT/cropState.width,LOGO_OUTPUT/cropState.height)*cropState.zoom;
+    const w=cropState.width*scale,h=cropState.height*scale;
+    cropState.panX=Math.max(-(w-LOGO_OUTPUT)/2,Math.min((w-LOGO_OUTPUT)/2,cropState.panX));
+    cropState.panY=Math.max(-(h-LOGO_OUTPUT)/2,Math.min((h-LOGO_OUTPUT)/2,cropState.panY));
+  }
+  function drawLogoCrop(){
+    const canvas=$("logo-crop-canvas");
+    if(!canvas||!cropState?.img)return;
+    const ctx=canvas.getContext("2d");
+    if(!ctx){notify("Seu navegador não disponibilizou o editor de imagem.");return;}
+    const scale=Math.max(LOGO_OUTPUT/cropState.width,LOGO_OUTPUT/cropState.height)*cropState.zoom;
+    const w=cropState.width*scale,h=cropState.height*scale;
+    clampLogoPan();
+    ctx.clearRect(0,0,LOGO_OUTPUT,LOGO_OUTPUT);
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
+    ctx.drawImage(cropState.img,(LOGO_OUTPUT-w)/2+cropState.panX,(LOGO_OUTPUT-h)/2+cropState.panY,w,h);
+  }
+  function readLogoFile(file){
+    if(!file)return;
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type)){
+      notify("Use uma imagem PNG, JPG ou WebP.");return;
+    }
+    if(!file.size||file.size>LOGO_MAX_BYTES){
+      notify("A imagem precisa ter no máximo 5 MB.");return;
+    }
+    const reader=new FileReader();
+    reader.addEventListener("error",()=>notify("Não foi possível abrir a imagem. Tente outro arquivo."));
+    reader.addEventListener("load",()=>{
+      const img=new Image();
+      img.onerror=()=>notify("Não foi possível ler a imagem. Use PNG, JPG ou WebP válido.");
+      img.onload=()=>{
+        const width=img.naturalWidth,height=img.naturalHeight;
+        if(width<LOGO_MIN_DIM||height<LOGO_MIN_DIM){
+          notify("Imagem muito pequena. Use no mínimo 128 × 128 pixels.");return;
+        }
+        if(width>LOGO_MAX_DIM||height>LOGO_MAX_DIM){
+          notify("Resolução muito alta. Cada lado pode ter até 4096 pixels.");return;
+        }
+        cropState={img,fileName:file.name.slice(0,100),width,height,zoom:1,panX:0,panY:0,drag:null};
+        openDialog("logo-crop");
+        drawLogoCrop();
+      };
+      img.src=String(reader.result);
+    });
+    reader.readAsDataURL(file);
+  }
+  function saveLogoCrop(){
+    if(!cropState)return;
+    const canvas=$("logo-crop-canvas");
+    if(!canvas)return;
+    try{
+      drawLogoCrop();
+      const data=canvas.toDataURL("image/png");
+      if(!data.startsWith("data:image/png;base64,"))throw Error("encoding");
+      settings().logo=data;
+      closeDialog();
+      updateLogoBrand();
+      notify("Logotipo aplicado à identidade do negócio.");
+    }catch(_){notify("Não foi possível concluir o recorte. Tente outra imagem.");}
+  }
+
   function logoPreviewMarkup() {
     return settings().logo
       ? '<img src="'+safe(settings().logo)+'" alt="Logotipo atual de '+safe(settings().name)+'">'
@@ -494,6 +659,7 @@
     if(control)control.focus();
   }
   function closeDialog(){
+    if(state.dialog?.type==="logo-crop")cropState=null;
     modal.hidden=true;modal.innerHTML="";state.dialog=null;document.body.style.overflow="";
     if(returnFocus && returnFocus.isConnected)returnFocus.focus();
   }
@@ -625,8 +791,8 @@
   function renderDialog(){
     if(!state.dialog)return;
     const d=state.dialog;
-    modal.innerHTML='<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
+    modal.innerHTML='<section class="dialog'+(d.type==="logo-crop"?" crop-dialog":"")+'" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
+      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
