@@ -116,3 +116,15 @@ html[data-accessibility="on"] .channel-link{min-height:54px}
  .contact-fab svg{height:28px;width:28px}
  .topbar .top-right{gap:5px}
 }
+
+/* Evita que toast cubra o botão de contato, inclusive no celular. */
+.toast{right:22px;bottom:94px}
+@media(max-width:470px){
+ .topbar .breadcrumb{display:none}
+ .topbar .top-right{gap:4px}
+ .topbar .sector-switch{height:35px;padding:0 6px}
+ .topbar .sector-switch select{max-width:95px;font-size:10px}
+ .account-top-trigger{width:31px;height:31px}
+ .contact-panel{width:min(315px,calc(100vw - 26px))}
+ .toast{bottom:82px;right:12px;max-width:calc(100vw - 24px)}
+}
