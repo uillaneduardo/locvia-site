@@ -4,6 +4,7 @@ Site de apresentação da **Locvia**, ferramenta para organizar aluguéis de ite
 
 - Landing page: `/`
 - Demonstração: `/demo/`
+- Orçamentos na demo: [fluxo, documento A4 e planejamento da API](./docs/orcamentos.md)
 - Central de Ajuda / FAQ: `/ajuda/`
 - Health check: `/healthz`
 - Decisões de produto, marca e implementação: [`docs/`](./docs/README.md)
@@ -228,6 +229,8 @@ locvia-site/
     │   ├── personalization.css
     │   ├── calendar-notifications.css
     │   ├── finance-account.css
+    │   ├── quotes.js            # emissão fictícia de orçamentos
+    │   ├── quotes.css           # formulário e impressão A4
     │   ├── responsive.css         # largura automática em todas as telas
     │   └── contact-widget.js
     └── ajuda/
@@ -266,6 +269,10 @@ A demo também possui um botão flutuante **verde WhatsApp** no canto inferior d
 **Não há dinheiro real, integração bancária, processamento de cartões, login ou senha em operação.** Os dados fictícios voltam ao início ao recarregar.
 
 **Decisão arquitetural:** backend futuro em **PHP**, API REST/JSON HTTPS **pública autenticada**, validação, autorização, controle transacional e isolamento multiempresa no servidor. Frontend em HTML/CSS/JS puros. WebSocket/WSS e workers PHP assíncronos apenas para eventos ou tarefas que justifiquem tempo real ou processamento em fila. Consulte [Arquitetura da API PHP](./docs/arquitetura-api-php.md) e [Financeiro, Conta e Contatos](./docs/financeiro-conta-contatos.md).
+
+## Novo orçamento na tela Aluguéis
+
+O botão **Novo orçamento** abre um formulário de proposta com cliente, período, validade, itens, preços, taxa de serviços, desconto e observações. A opção **Emitir orçamento** gera um documento fictício numerado que pode ser reaberto e **impresso ou salvo como PDF pelo navegador**. A emissão não reserva estoque, não cria aluguel nem altera o Financeiro. Os orçamentos duram somente na memória da aba e são separados por cenário. Consulte [Orçamentos](./docs/orcamentos.md) para fluxo, critérios e endpoints planejados.
 
 ## Largura responsiva da demonstração
 
