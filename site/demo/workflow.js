@@ -325,9 +325,9 @@
       '<button type="button" data-action="rentals-calendar" aria-pressed="'+(state.rentalsMode==="calendar")+'" aria-label="Ver aluguéis em calendário">'+icon("calendar")+'<span>Calendário</span></button></div>';
     const list='<section class="panel"><div class="panel-head"><div><h2>Aluguéis cadastrados</h2><p>'+rentals.length+' registros neste exemplo</p></div></div>'+
       '<div class="table-wrap"><table class="data-table"><thead><tr><th>Número</th><th>Cliente</th><th>Período</th><th>Situação</th><th class="align-end">Valor</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
-    return heading("Tudo registrado","Seus aluguéis","Acompanhe seus aluguéis em lista ou no calendário.",createBtn()) +
+    return heading("Tudo registrado","Seus aluguéis","Acompanhe seus aluguéis em lista ou no calendário.",'<div class="rentals-primary-actions">'+createBtn()+window.LocviaQuotes.toolbarButton()+'</div>') +
       infoBanner()+'<div class="filters rentals-toolbar">'+buttons+'<label class="field-search">'+icon("search")+'<input id="list-search" type="search" value="'+safe(state.search)+'" placeholder="Buscar cliente ou item" aria-label="Buscar aluguéis"></label>'+toggle+'</div>'+
-      (state.rentalsMode==="calendar"?calendarView(rentals):list);
+      (state.rentalsMode==="calendar"?calendarView(rentals):list)+window.LocviaQuotes.listMarkup();
   }
   function itemsView() {
     const valid=Boolean(state.stockFrom && state.stockTo && state.stockFrom<=state.stockTo);
@@ -936,12 +936,13 @@
     const model=entity==="customer"?customer(id):product(id);
     if(!model)return dialogHeader("EXCLUSÃO","Registro não encontrado");
     const refs=db().rentals.filter(r=>entity==="customer"?r.clientId===id:r.items.some(l=>l.id===id));
-    const blocked=refs.length>0;
+    const quoteUsed=window.LocviaQuotes.references(entity,id);
+    const blocked=refs.length>0||quoteUsed;
     return dialogHeader("EXCLUIR "+(entity==="customer"?"CLIENTE":"ITEM"),"Excluir "+model.name+"?")+
       '<div class="dialog-body"><p class="setting-hint">'+(blocked?
-        'Este registro aparece em '+refs.length+' '+(refs.length===1?"aluguel":"aluguéis")+'. Para preservar o histórico, não pode ser excluído. Você pode editar seus dados.':
+        'Este registro está vinculado a '+refs.length+' '+(refs.length===1?"aluguel":"aluguéis")+(quoteUsed?" e a orçamentos emitidos":"")+'. Para preservar o histórico, não pode ser excluído. Você pode editar seus dados.':
         'A exclusão retira o registro desta demonstração. Essa ação não pode ser desfeita sem restaurar os exemplos.')+'</p>'+
-      (blocked?'<div class="warn-inline red">'+icon("alert")+'Exclusão indisponível: existem aluguéis vinculados, inclusive no histórico.</div>':"")+
+      (blocked?'<div class="warn-inline red">'+icon("alert")+'Exclusão indisponível: existem aluguéis ou orçamentos vinculados.</div>':"")+
       '</div>'+dialogFoot('<button type="button" class="outline-btn" data-action="close">Fechar</button>'+
       (blocked?'':'<button type="button" class="primary-btn destructive" data-action="delete-confirm" data-entity="'+entity+'" data-id="'+safe(id)+'">'+icon("trash")+' Confirmar exclusão</button>'));
   }
@@ -950,8 +951,8 @@
     const isCustomer=entity==="customer";
     const model=isCustomer?customer(id):product(id);
     if(!model)return;
-    if(db().rentals.some(r=>isCustomer?r.clientId===id:r.items.some(l=>l.id===id))){
-      notify("Registro em uso. Não é possível excluir.");return;
+    if(db().rentals.some(r=>isCustomer?r.clientId===id:r.items.some(l=>l.id===id)) || window.LocviaQuotes.references(entity,id)){
+      notify("Registro em uso por aluguéis ou orçamentos. Não é possível excluir.");return;
     }
     const list=isCustomer?db().clients:db().items;
     const at=list.findIndex(p=>p.id===id);if(at===-1)return;
@@ -1188,7 +1189,7 @@
     if(!state.dialog)return;
     const d=state.dialog;
     modal.innerHTML='<section class="dialog'+(d.type==="logo-crop"?" crop-dialog":"")+'" role="dialog" aria-modal="true" aria-labelledby="dialog-title">'+
-      (d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="notifications"?notificationsDialog():d.type==="expense"?expenseDialog():d.type==="receive"?receiveDialog(d.id):d.type==="account-email"?accountEmailDialog():d.type==="account-password"?passwordDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
+      (d.type==="quote-create"||d.type==="quote-view"?window.LocviaQuotes.dialogMarkup(d.type):d.type==="new"?newDialog():d.type==="rental"?rentalDialog(d.id):d.type==="customer"?customerDialog(d.id):d.type==="item"?itemDialog(d.id):d.type==="customer-form"?customerFormDialog(d.id):d.type==="item-form"?itemFormDialog(d.id):d.type==="logo-crop"?cropDialog():d.type==="logo-view"?logoViewDialog():d.type==="notifications"?notificationsDialog():d.type==="expense"?expenseDialog():d.type==="receive"?receiveDialog(d.id):d.type==="account-email"?accountEmailDialog():d.type==="account-password"?passwordDialog():d.type==="reset-confirm"?resetConfirmDialog():deleteDialog(d.type,d.id))+"</section>";
     if(d.type==="new")refreshAvailability();
   }
   function moveRental(id,next){
@@ -1296,7 +1297,7 @@
       }
     }
     if(kind==="reset"){
-      databases[state.segment]=loadFixture(state.segment);state.financeHidden=settings().financeHiddenByDefault;closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
+      databases[state.segment]=loadFixture(state.segment);window.LocviaQuotes.reset(state.segment);state.financeHidden=settings().financeHiddenByDefault;closeDialog();state.search="";state.filter="todos";state.stockFrom=today;state.stockTo=offset(2);render();notify("Dados de exemplo restaurados.");
     }
   });
 
@@ -1412,6 +1413,11 @@
   window.addEventListener("hashchange",()=>{
     const page=location.hash.slice(1);
     if(titles[page]&&page!==state.view){state.view=page;state.search="";state.filter="todos";render();}
+  });
+  window.LocviaQuotes.bind({
+    segment:()=>state.segment,clients:()=>db().clients,items:()=>db().items,
+    client:customer,item:product,settings,today,offset,icon,money,
+    notify,go,openDialog,renderDialog,render
   });
   render();
 })();
