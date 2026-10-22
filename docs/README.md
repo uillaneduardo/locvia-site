@@ -1,12 +1,13 @@
 # Documentação do Locvia
 
-Este diretório reúne as **decisões de produto, marca, experiência e implementação** adotadas no projeto Locvia até **21/10/2026**. Serve como referência para desenvolver a plataforma definitiva sem confundir funcionalidades da demonstração com funcionalidades operacionais.
+Este diretório reúne as **decisões de produto, marca, experiência e implementação** adotadas no projeto Locvia até **22/10/2026**. Serve como referência para desenvolver a plataforma definitiva sem confundir funcionalidades da demonstração com funcionalidades operacionais.
 
 ## Índice
 
 | Documento | O que contém |
 | --- | --- |
 | [Arquitetura-alvo — API PHP](./arquitetura-api-php.md) | Domínios, endpoints, autenticação, transações, WebSockets e workers assíncronos |
+| [Orçamentos: emissão e integração](./orcamentos.md) | Formulário, cálculo em centavos, visualização, PDF A4 pelo navegador e contratos de API futuros |
 | [Financeiro, Conta e Contatos](./financeiro-conta-contatos.md) | Modelo de caixa, privacidade, conta, assinatura e canais configuráveis |
 | [Responsividade da demo](./responsividade.md) | Largura automática e validação das sete telas em desktop, tablet e mobile |
 | [Identidade visual](./identidade-visual.md) | Wordmark oficial `locvia.`, cores, tipografia, favicon e regras de aplicação |
