@@ -1,0 +1,97 @@
+/* Orçamentos — componente isolado, adaptável ao layout da demo. */
+.rentals-primary-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:9px;min-width:0}
+.quote-list-panel{margin-top:22px}
+.quote-list-panel .panel-head{gap:12px;flex-wrap:wrap}
+.quote-list-panel .data-table td small{display:block;color:var(--muted,#758299);margin-top:5px}
+.quote-empty{padding:22px;font-size:13px;color:var(--muted,#758299)}
+.quote-empty p{margin:0 0 12px}
+.quote-note{padding:11px 13px;border:1px solid var(--primary-line,#dce3ff);background:var(--primary-pale,#f1f4ff);color:var(--text,#3e4e65);border-radius:9px;font-size:12px;line-height:1.6;margin-bottom:20px}
+#quote-form{min-height:0;display:flex;flex-direction:column;flex:1}
+#quote-form .dialog-body{min-height:0;overflow-y:auto}
+.quote-add-row{display:grid;grid-template-columns:minmax(0,1fr) 92px auto;align-items:end;gap:9px}
+.quote-add-row>.outline-btn{min-height:42px}
+.quote-lines{margin-top:14px;border:1px solid var(--line,#e5e9f1);border-radius:10px;overflow:hidden}
+.quote-line{display:grid;grid-template-columns:minmax(135px,1fr) 72px 138px auto 33px;gap:10px;align-items:end;padding:13px;border-bottom:1px solid var(--line-2,#edf0f4)}
+.quote-line:last-child{border-bottom:0}
+.quote-line-name{align-self:center;min-width:0}
+.quote-line-name strong{font-size:12px;color:var(--text,#26384d);display:block;overflow-wrap:anywhere}
+.quote-line-name small{font-size:10px;display:block;margin-top:5px;color:var(--muted,#8490a5)}
+.quote-line-total{font-size:12px;align-self:center;white-space:nowrap;color:var(--text,#26384d);font-variant-numeric:tabular-nums}
+.quote-line .form-field input{font-variant-numeric:tabular-nums}
+.quote-line>.icon-btn{height:39px;align-self:end}
+.quote-quiet{padding:16px;margin:0;font-size:12px;color:var(--muted,#748094)}
+.quote-adjustments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.quote-totals{padding:14px 0;display:grid;gap:9px;margin:6px 0 0 auto;width:min(100%,335px);font-size:12px}
+.quote-totals>div{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.quote-totals>div>span{color:var(--muted,#778396)}
+.quote-totals .quote-grand-total{border-top:1px solid var(--line,#dce3ed);padding-top:12px;font-size:15px}
+.quote-grand-total strong{font-size:18px;color:var(--text,#26384d);font-variant-numeric:tabular-nums}
+.quote-notes{margin-top:12px}
+.quote-notes textarea{margin-top:7px;width:100%;min-height:79px;resize:vertical;max-height:180px;border:1px solid var(--line,#dfe4ee);border-radius:9px;background:var(--white,#fff);color:var(--text,#273850);padding:12px;line-height:1.5;font:inherit}
+.quote-notes textarea:focus-visible{outline:2px solid var(--primary,#455cd4);outline-offset:1px}
+.dialog:has(.quote-preview),.dialog:has(#quote-form){width:min(810px,100%)}
+.quote-preview .quote-document{margin:0 auto}
+.quote-document{--quote-ink:#1b293d;--quote-muted:#677589;--quote-line:#e0e6ed;color:var(--quote-ink);background:#fff;border:1px solid #e2e6ee;padding:28px 32px;font:12px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-wrap:anywhere}
+.quote-doc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:16px;border-bottom:2px solid #263956}
+.quote-doc-top>div:first-child{display:flex;flex-direction:column;gap:3px}
+.quote-document-logo{max-height:50px;max-width:108px;object-fit:contain;object-position:left;margin-bottom:6px}
+.quote-business{font-size:17px;letter-spacing:-.02em}
+.quote-doc-top small,.quote-doc-number small{color:var(--quote-muted);font-size:10px}
+.quote-doc-number{text-align:right;display:flex;flex-direction:column}
+.quote-doc-number>strong{letter-spacing:.08em;font-size:10px}
+.quote-doc-number span{font-size:18px;font-weight:800}
+.quote-demo-watermark{margin:18px 0;color:#805525;background:#fff6e7;border:1px solid #ecd6b4;text-align:center;padding:7px 10px;border-radius:5px;font-size:10px;font-weight:800;letter-spacing:.035em}
+.quote-doc-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 24px;margin:18px 0 24px}
+.quote-doc-meta>div{display:flex;flex-direction:column;gap:3px}
+.quote-doc-meta small{color:var(--quote-muted);font-size:10px}
+.quote-doc-meta strong{font-size:12px}
+.quote-doc-table{border-collapse:collapse;width:100%;font-size:11px}
+.quote-doc-table th{text-align:left;font-size:10px;color:#5f6b7d;background:#f4f6f9;padding:9px 8px;border-bottom:1px solid var(--quote-line)}
+.quote-doc-table td{padding:11px 8px;border-bottom:1px solid var(--quote-line);vertical-align:top}
+.quote-doc-table th:not(:first-child),.quote-doc-table td:not(:first-child){white-space:nowrap}
+.quote-doc-table .num{text-align:right}
+.quote-doc-total{margin:18px 0 20px auto;width:min(100%,280px);display:grid;gap:7px}
+.quote-doc-total>div{display:flex;justify-content:space-between;gap:15px}
+.quote-doc-total>div>span{color:var(--quote-muted)}
+.quote-doc-total .quote-doc-grand{border-top:1px solid #c9d2e1;margin-top:3px;padding-top:11px;font-size:15px;color:var(--quote-ink)}
+.quote-doc-notes{border-top:1px solid var(--quote-line);padding-top:13px}
+.quote-doc-notes p{margin:5px 0 0;white-space:normal}
+.quote-doc-footer{color:#697589;font-size:10px;border-top:1px solid var(--quote-line);margin-top:30px;padding-top:12px}
+#quote-print-root{display:none}
+html[data-mode="dark"] .quote-document{background:#fff;color:#1b293d;border-color:#e2e6ee;color-scheme:light}
+html[data-mode="dark"] .quote-line-name strong,html[data-mode="dark"] .quote-grand-total strong,html[data-mode="dark"] .quote-line-total{color:var(--text)}
+html[data-mode="dark"] .quote-lines{border-color:var(--line)}
+html[data-mode="dark"] .quote-note{color:var(--text)}
+html[data-mode="dark"] .quote-notes textarea{background:#101c2d;color:#e5eefb;border-color:#354258}
+@media(max-width:720px){
+  .quote-line{grid-template-columns:minmax(0,1fr) 100px;align-items:center}
+  .quote-line-name{grid-column:1/-1}
+  .quote-line .form-field{min-width:0}
+  .quote-line-total{justify-self:start}
+  .quote-add-row{grid-template-columns:minmax(0,1fr) 84px}
+  .quote-add-row .outline-btn{grid-column:1/-1}
+}
+@media(max-width:540px){
+  .rentals-primary-actions{width:100%;justify-content:stretch}
+  .rentals-primary-actions>button{flex:1;white-space:normal}
+  .quote-adjustments{grid-template-columns:1fr}
+  .quote-list-panel .panel-head>.outline-btn{width:100%}
+  .quote-document{padding:15px 13px}
+  .quote-doc-meta{gap:10px;grid-template-columns:1fr 1fr}
+  .quote-doc-top{gap:8px}
+  .quote-doc-number span{font-size:14px}
+  .quote-doc-table{font-size:10px}
+  .quote-doc-table td,.quote-doc-table th{padding:8px 3px}
+  .quote-preview{padding:12px}
+}
+@page{size:A4;margin:13mm}
+@media print {
+  html,html[data-mode="dark"],body{background:#fff!important;color:#1b293d!important;color-scheme:light!important}
+  body>*:not(#quote-print-root){display:none!important}
+  #quote-print-root{display:block!important;position:static!important;width:100%!important}
+  #quote-print-root .quote-document{border:0;box-shadow:none;margin:0;padding:0;color:#1b293d;background:#fff;font-size:11pt}
+  #quote-print-root .quote-demo-watermark{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #quote-print-root .quote-doc-table tr{break-inside:avoid}
+  #quote-print-root .quote-doc-top,#quote-print-root .quote-doc-meta,#quote-print-root .quote-doc-total{break-inside:avoid}
+  #quote-print-root .quote-doc-footer{margin-top:18px}
+}
