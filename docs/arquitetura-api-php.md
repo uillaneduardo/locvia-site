@@ -36,11 +36,16 @@ Endpoints abaixo são **especificação de planejamento**; nenhum deles foi cria
 | Clientes | Lista, criar, consultar, editar, arquivar | `GET/POST /customers`, `GET/PATCH /customers/{id}`, `DELETE /customers/{id}` (conforme vínculos/política) |
 | Itens e estoque | Lista, busca, disponibilidade, CRUD | `GET/POST /items`, `GET/PATCH /items/{id}`, `DELETE /items/{id}`, `GET /items/{id}/availability?from=&to=`, `GET /items/{id}/rentals` |
 | Aluguéis | Lista/calendário, criar, detalhes, ações de status | `GET/POST /rentals`, `GET/PATCH /rentals/{id}`, `POST /rentals/{id}/prepare`, `POST /rentals/{id}/pickup`, `POST /rentals/{id}/return`, `POST /rentals/{id}/cancel` |
+| Orçamentos | Listar, emitir, consultar proposta e obter documento | `GET/POST /quotes`, `GET /quotes/{id}`, `GET /quotes/{id}/pdf`, `POST /quotes/{id}/convert` (futuro) |
 | Financeiro do negócio | Resumo, extrato, recebimentos, despesas | `GET /finance/summary?month=`, `GET /finance/transactions?month=&status=`, `POST /rentals/{id}/payments`, `GET/POST /finance/expenses`, `GET/PATCH /finance/expenses/{id}`, `POST /finance/expenses/{id}/settle` |
 | Alertas e notificações | Sino, preferências e leitura | `GET /notifications`, `GET/PATCH /notification-preferences`, `POST /notifications/{id}/read` |
 | Suporte público | Canais definidos pela operação | `GET /public/support-channels` (somente dados destinados à divulgação) |
 
 Paginação/filtros, erros HTTP padronizados, ordenação e busca devem ser consistentes. Preferir comandos de domínio (`/prepare`, `/return`, `/settle`) a permitir alteração arbitrária de status.
+
+### Separação entre orçamento, aluguel e Financeiro
+
+Orçamentos não ocupam estoque e não geram receita a receber. A emissão registra o snapshot do documento e dos preços; eventual conversão em aluguel deve revalidar estoque e regras **transacionalmente**, sem presumir a disponibilidade consultada no momento da proposta. Documento/PDF e envio externo podem usar workers PHP. Contratos propostos: [Orçamentos](./orcamentos.md).
 
 ### Regra crítica: reservar estoque
 
@@ -56,6 +61,7 @@ A tela `Financeiro` não administra pagamentos da assinatura Locvia; esses perte
 
 Um worker PHP persistente expõe **WSS autenticado**, com autorização por tenant e tópicos delimitados (ex.: `org:{id}:rentals`, `org:{id}:finance`, `user:{id}:notifications`). Eventos recomendados:
 
+- `quote.issued`, `quote.converted` (somente quando houver emissão/conversão real)
 - `rental.created`, `rental.status_changed`, `rental.returned`
 - `item.availability_changed`
 - `finance.payment_recorded`, `finance.expense_settled`
