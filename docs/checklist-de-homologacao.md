@@ -48,6 +48,17 @@ Use este roteiro **após atualizar o container**, verificando em navegador deskt
 - [ ] Landing page preserva texto e links após alteração de marca.
 - [ ] Verificar nas larguras ~360, 390, 768, 1366 e 1920 px.
 
+## Orçamentos — Meus Aluguéis
+
+- [ ] Botão **Novo orçamento** visível em desktop e mobile, sem esconder **Novo aluguel**.
+- [ ] Seleção de cliente, datas, validade, itens, preço unitário, desconto, entrega e observações.
+- [ ] Totais corretos e validações de quantidade, datas e descontos inválidos.
+- [ ] Emitir, reabrir e imprimir/salvar PDF A4 com aviso **DEMONSTRAÇÃO**.
+- [ ] Orçamentos não alteram estoque, aluguéis nem Financeiro.
+- [ ] Alternar cenário e restaurar exemplo mantém isolamento em memória.
+- [ ] Exclusão de item/cliente referenciado por orçamento é bloqueada.
+- [ ] Documentação e contrato planejado: [Orçamentos](./orcamentos.md).
+
 ## Critério de aceite
 
 Não registrar “homologado em produção” só por atualização no GitHub ou checks automatizados. Registrar manualmente **data**, **navegador**, **dispositivo**, **resultado** e **pendências** após o deploy.
