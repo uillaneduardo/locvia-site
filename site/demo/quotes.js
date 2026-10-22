@@ -15,8 +15,18 @@
   };
   const rawMoney = value => (value / 100).toFixed(2);
   const store = segment => (stores[segment] ||= {next:1000, quotes:[]});
-  const current = () => store(app.segment());
-  const quoteById = id => current().quotes.find(q => q.id === id);
+  // Boundary between UI and data source: replace with an authenticated async REST client later.
+  const repository = {
+    list: segment => store(segment).quotes.slice(),
+    get: (segment,id) => store(segment).quotes.find(q=>q.id===id) || null,
+    create: (segment,payload) => {
+      const db=store(segment),quote={...payload,id:"ORC-"+(++db.next)};
+      db.quotes.unshift(quote);
+      return quote;
+    },
+    reset: segment => {delete stores[segment];}
+  };
+  const quoteById = id => repository.get(app.segment(),id);
   const sum = d => {
     const subtotal = d.lines.reduce((amount,line) => amount + line.qty * (cents(line.price) ?? 0), 0);
     const fee = cents(d.fee) ?? 0;
@@ -39,7 +49,7 @@
     return '<button type="button" class="outline-btn" data-quote-action="new">'+app.icon("plus")+' Novo orçamento</button>';
   }
   function listMarkup() {
-    const quotes = current().quotes;
+    const quotes = repository.list(app.segment());
     const rows = quotes.map(q => '<tr><td><button class="text-btn" type="button" data-quote-action="view" data-id="'+html(q.id)+'"><strong>'+html(q.id)+'</strong></button><small>'+localDate(q.issuedAt)+'</small></td>'+
       '<td>'+html(q.customer.name)+'</td><td>'+localDate(q.from)+' – '+localDate(q.to)+'</td>'+
       '<td>'+localDate(q.validUntil)+'</td><td class="align-end"><strong>'+app.money(q.totalCents / 100)+'</strong></td>'+
@@ -130,18 +140,18 @@
     sync();
     const error=validate();
     if(error){app.notify(error);return;}
-    const data=current(),amount=sum(draft),client=app.client(draft.clientId),settings=app.settings();
-    const document = {
-      id:"ORC-"+(++data.next),status:"issued",issuedAt:app.today,validUntil:draft.validUntil,
+    const amount=sum(draft),client=app.client(draft.clientId),settings=app.settings();
+    const payload = {
+      status:"issued",issuedAt:app.today,validUntil:draft.validUntil,
       from:draft.from,to:draft.to,clientId:draft.clientId,customer:{name:client.name},
       issuer:{name:settings.name,logo:settings.logo || null},notes:draft.notes.trim(),
       lines:draft.lines.map(line=>({itemId:line.itemId,description:line.name,quantity:line.qty,unitPriceCents:cents(line.price)})),
       subtotalCents:amount.subtotal,feeCents:amount.fee,discountCents:amount.discount,totalCents:amount.total
     };
-    data.quotes.unshift(document);
-    selectedId=document.id;draft=null;
+    const issued=repository.create(app.segment(),payload);
+    selectedId=issued.id;draft=null;
     app.render();app.openDialog("quote-view");
-    app.notify("Orçamento "+document.id+" emitido somente nesta demonstração.");
+    app.notify("Orçamento "+issued.id+" emitido somente nesta demonstração.");
   }
   function documentMarkup(q) {
     const logo=q.issuer.logo?'<img class="quote-document-logo" src="'+html(q.issuer.logo)+'" alt="Logotipo do negócio">':"";
@@ -179,7 +189,7 @@
     window.print();
   }
   function references(entity,id) {
-    return current().quotes.some(q=>entity==="customer"?q.clientId===id:q.lines.some(l=>l.itemId===id));
+    return repository.list(app.segment()).some(q=>entity==="customer"?q.clientId===id:q.lines.some(l=>l.itemId===id));
   }
 
   document.addEventListener("click",event=>{
@@ -217,9 +227,8 @@
     bind(context){app=context;},
     toolbarButton,listMarkup,
     dialogMarkup(type){return type==="quote-create"?editor():viewer();},
-    reset(segment){delete stores[segment];draft=null;selectedId=null;},
+    reset(segment){repository.reset(segment);draft=null;selectedId=null;},
     references,
-    // Seam for future authenticated API repository: list/get/create rather than direct DOM persistence.
-    repository:{list:segment=>store(segment).quotes.slice(),get:(segment,id)=>store(segment).quotes.find(q=>q.id===id)||null}
+    repository
   };
 })();
