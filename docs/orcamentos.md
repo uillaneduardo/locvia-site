@@ -28,7 +28,7 @@ Os orçamentos ficam **somente em memória** por cenário de negócio e são rei
 
 ## Preparação da integração REST/JSON (PHP)
 
-A interface usa um módulo `window.LocviaQuotes` isolado com estado de demonstração e funções de acesso `repository.list(segment)` / `repository.get(segment,id)`. Para integrar o produto real, substituir esse adaptador por um serviço HTTP com tratamento de carregamento, falhas, autorização e autenticação. Não conectar diretamente o banco à UI.
+A interface usa um módulo `window.LocviaQuotes` isolado com estado de demonstração e funções de acesso `repository.list(segment)` / `repository.get(segment,id)` / `repository.create(segment,payload)` / `repository.reset(segment)`. Para integrar o produto real, substituir esse adaptador por um serviço HTTP com tratamento de carregamento, falhas, autorização e autenticação. Não conectar diretamente o banco à UI.
 
 **Base de planejamento (ainda inexistente):** `https://api.locvia.com.br/api/v1`, acessível via HTTPS e com autenticação/sessão válida. Exemplo de endpoints:
 
